@@ -48,6 +48,8 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao{
                 + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
                 + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
                 + "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+                + "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
+                + "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName} . "
                 + "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}} "
                 + "limit(" + offset + ") offset(" + start + ")";
 
@@ -67,6 +69,7 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao{
                 tcmInferData.setTargetID(map.get("targetID").toString());
                 tcmInferData.setTargetName(map.get("targetName").toString());
                 tcmInferData.setProteinAcce(map.get("proteinAcce").toString());
+                tcmInferData.setGeneName(map.get("geneName").toString());
                 tcmInferData.setGeneGOID(map.get("GOID").toString());
                 tcmInferData.setGeneProduct(map.get("genePro").toString());
                 tcmInferDatas.add(tcmInferData);

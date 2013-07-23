@@ -23,6 +23,8 @@ public class TcmInferData {
     private String targetName;
 
     private String proteinAcce;
+    
+    private String geneName;
 
     private String geneGOID;
 
@@ -90,6 +92,14 @@ public class TcmInferData {
 
     public void setProteinAcce(final String proteinAcce) {
         this.proteinAcce = proteinAcce;
+    }
+    
+    public String getGeneName() {
+    		return geneName;
+    }
+    
+    public void setGeneName(final String geneName) {
+    		this.geneName = geneName;
     }
 
     public String getGeneGOID() {
