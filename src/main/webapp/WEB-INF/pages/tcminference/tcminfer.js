@@ -101,11 +101,12 @@ var tcminfer = {
 	},
 	
 	toHtmlRowTab1 : function(tcmInferData){
+		
 		$('#tab1-table-sample-row .tcm-name').html(tcminfer.splitResource(tcmInferData.tcmName));
 		$('#tab1-table-sample-row .disease-name').html(tcminfer.splitResource(tcmInferData.diseaseName));
 		$('#tab1-table-sample-row .disease-ID').html(tcminfer.splitResource(tcmInferData.diseaseID));
-		$('#tab1-table-sample-row .drud-ID').html(tcminfer.splitResource(tcmInferData.drugID));
-		$('#tab1-table-sample-row .target-ID').html(tcminfer.splitResource(tcmInferData.targetID));
+		$('#tab1-table-sample-row .drug-name').html(tcminfer.splitResource(tcmInferData.drugName));
+		$('#tab1-table-sample-row .target-name').html(tcminfer.splitResource(tcmInferData.targetName));
 		$('#tab1-table-sample-row .protein-acce').html(tcminfer.splitResource(tcmInferData.proteinAcce));
 		$('#tab1-table-sample-row .gene-ID').html(tcminfer.splitResource(tcmInferData.geneGOID));
 		$('#tab1-table-sample-row .gene-prod').html(tcminfer.splitResource(tcmInferData.geneProduct));
@@ -116,8 +117,8 @@ var tcminfer = {
 		$('#tab2-table-sample-row .tcm-name').html(tcmInferData.tcmName);
 		$('#tab2-table-sample-row .disease-name').html(tcmInferData.diseaseName);
 		$('#tab2-table-sample-row .disease-ID').html(tcmInferData.diseaseID);
-		$('#tab2-table-sample-row .drud-ID').html(tcmInferData.drugID);
-		$('#tab2-table-sample-row .target-ID').html(tcmInferData.targetID);
+		$('#tab2-table-sample-row .drug-name').html(tcmInferData.drugName);
+		$('#tab2-table-sample-row .target-name').html(tcmInferData.targetName);
 		$('#tab2-table-sample-row .protein-acce').html(tcmInferData.proteinAcce);
 		$('#tab2-table-sample-row .gene-ID').html(tcmInferData.geneGOID);
 		$('#tab2-table-sample-row .gene-prod').html(tcmInferData.geneProduct);

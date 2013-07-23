@@ -72,7 +72,6 @@ var bioinfer = {
 		if(data.status==false){
 			// TODO
 		} else {
-			console.log(data);
 			for(var i=0; i < data.bioInferData.length; i++) {
 				var htmlRowTab2 = bioinfer.toHtmlRowTab2(data.bioInferData[i]);
 				var htmlRowTab1 = bioinfer.toHtmlRowTab1(data.bioInferData[i]);

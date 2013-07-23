@@ -44,7 +44,9 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao{
                 + "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
                 + "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
                 + "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+                + "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
                 + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+                + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
                 + "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
                 + "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}} "
                 + "limit(" + offset + ") offset(" + start + ")";
@@ -61,7 +63,9 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao{
                 tcmInferData.setDiseaseName(map.get("diseaseName").toString());
                 tcmInferData.setDiseaseID(map.get("diseaseID").toString());
                 tcmInferData.setDrugID(map.get("drugID").toString());
+                tcmInferData.setDrugName(map.get("drugName").toString());
                 tcmInferData.setTargetID(map.get("targetID").toString());
+                tcmInferData.setTargetName(map.get("targetName").toString());
                 tcmInferData.setProteinAcce(map.get("proteinAcce").toString());
                 tcmInferData.setGeneGOID(map.get("GOID").toString());
                 tcmInferData.setGeneProduct(map.get("genePro").toString());

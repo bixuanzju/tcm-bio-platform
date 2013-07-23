@@ -15,8 +15,12 @@ public class TcmInferData {
     private String diseaseID;
 
     private String drugID;
+    
+    private String drugName;
 
     private String targetID;
+    
+    private String targetName;
 
     private String proteinAcce;
 
@@ -55,6 +59,14 @@ public class TcmInferData {
     public void setDrugID(final String drugID) {
         this.drugID = drugID;
     }
+    
+    public String getDrugName() {
+      	return drugName;
+    }
+
+    public void setDrugName(final String drugName) {
+      	this.drugName = drugName;
+    }
 
     public String getTargetID() {
         return targetID;
@@ -62,6 +74,14 @@ public class TcmInferData {
 
     public void setTargetID(final String targetID) {
         this.targetID = targetID;
+    }
+    
+    public String getTargetName() {
+      	return targetName;
+    }
+
+    public void setTargetName(final String targetName) {
+      	this.targetName = targetName;
     }
 
     public String getProteinAcce() {
