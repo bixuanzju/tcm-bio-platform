@@ -13,7 +13,9 @@ import com.ccnt.tcmbio.data.graph.Graphml;
 
 public interface BioInferService {
 
-    public BioInferSearchData getBioInference(String tcmName, Integer start, Integer offset);
+    public BioInferSearchData getDrugInference(String tcmName, Integer start, Integer offset);
+    
+    public BioInferSearchData getGeneNameInference(String geneName, Integer start, Integer offset);
 
     public ArrayList<TcmInferData> getAndCacheTcmInference(String tcmName);
 

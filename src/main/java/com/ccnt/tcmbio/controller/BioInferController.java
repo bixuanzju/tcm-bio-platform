@@ -32,13 +32,27 @@ public class BioInferController {
         this.bioInferService = bioInferService;
     }
 
-    @RequestMapping(value="/v0.9/bioinfer/kw={bioName}&s={start}&o={offset}", method=RequestMethod.GET)
-    public @ResponseBody String getBioInference(@PathVariable final String bioName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+    @RequestMapping(value="/v0.9/bioinfer/searchdrug/kw={bioName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody String getDrugInference(@PathVariable final String bioName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
-        LOGGER.debug("Received GET request: /v0.9/bioinfer/kw={}&s={}&o={}", bioName, start, offset);
-
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/searchdrug/kw={}&s={}&o={}", bioName, start, offset);
         try {
-            final BioInferSearchData bioSearchDatas = bioInferService.getBioInference(bioName, start, offset);
+            final BioInferSearchData bioSearchDatas = bioInferService.getDrugInference(bioName, start, offset);
+            final ObjectMapper objectMapper =  new ObjectMapper();
+            return objectMapper.writeValueAsString(bioSearchDatas);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/bioinfer/searchGeneName/kw={geneName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody String getGeneNameInference(@PathVariable final String geneName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/searchGeneName/kw={}&s={}&o={}", geneName, start, offset);
+        try {
+            final BioInferSearchData bioSearchDatas = bioInferService.getGeneNameInference(geneName, start, offset);
             final ObjectMapper objectMapper =  new ObjectMapper();
             return objectMapper.writeValueAsString(bioSearchDatas);
         } catch (final Exception e) {

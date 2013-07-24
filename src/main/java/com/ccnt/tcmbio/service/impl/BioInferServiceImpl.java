@@ -11,6 +11,7 @@ import static com.ccnt.tcmbio.data.Namespaces.DrugBank;
 import static com.ccnt.tcmbio.data.Namespaces.GeneOntology;
 import static com.ccnt.tcmbio.data.Namespaces.TCMGeneDITID;
 import static com.ccnt.tcmbio.data.Namespaces.UNIPROT;
+import static com.ccnt.tcmbio.data.Namespaces.GeneNamefix;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,27 +40,25 @@ public class BioInferServiceImpl implements BioInferService{
 
 
     @Override
-    public BioInferSearchData getBioInference(final String bioName, final Integer start, final Integer offset){
+    public BioInferSearchData getDrugInference(final String bioName, final Integer start, final Integer offset){
 
         LOGGER.debug("get the bio inference result");
         try {
             final BioInferSearchData bioSearchData = new BioInferSearchData();
 
-            if (!searchTcm(bioName)) {
-                bioSearchData.setFuzzymatchTCM(fuzzyMatchTcm(bioName));
-                bioSearchData.setStatus(false);
-                bioSearchData.setBioInferData(null);
-                return bioSearchData;
-            }
+//            if (!searchTcm(bioName)) {
+//                bioSearchData.setFuzzymatchTCM(fuzzyMatchTcm(bioName));
+//                bioSearchData.setStatus(false);
+//                bioSearchData.setBioInferData(null);
+//                return bioSearchData;
+//            }
 
-            String bio = bioName.substring(0, 1).toUpperCase() + bioName.substring(1).toLowerCase();
-            bio = bio.replace(" ", "_");
-//            bio = DrugBank + "drugs/" + bio;
-            final ArrayList<BioInferData> bioInferData = bioInferDao.getBioInference(bio, start, offset);
+
+            final ArrayList<BioInferData> bioInferData = bioInferDao.getDrugInference(bioName, start, offset);
             bioSearchData.setStatus(true);
             bioSearchData.setBioInferData(bioInferData);
             bioSearchData.setFuzzymatchTCM(null);
-            bioSearchData.setTotalNum(bioInferDao.getBioInferCount(bio));
+            bioSearchData.setTotalNum(bioInferDao.getDrugInferCount(bioName));
             return bioSearchData;
         } catch (final Exception e) {
             // TODO Auto-generated catch block
@@ -68,6 +67,34 @@ public class BioInferServiceImpl implements BioInferService{
         return null;
     }
 
+    @Override
+    public BioInferSearchData getGeneNameInference(final String gene, final Integer start, final Integer offset){
+
+        LOGGER.debug("get the bio inference result");
+        try {
+            final BioInferSearchData bioSearchData = new BioInferSearchData();
+//
+//            if (!searchTcm(geneName)) {
+//                bioSearchData.setFuzzymatchTCM(fuzzyMatchTcm(geneName));
+//                bioSearchData.setStatus(false);
+//                bioSearchData.setBioInferData(null);
+//                return bioSearchData;
+//            }
+
+            String geneName = GeneNamefix + gene;
+            final ArrayList<BioInferData> bioInferData = bioInferDao.getGeneNameInference(geneName, start, offset);
+            bioSearchData.setStatus(true);
+            bioSearchData.setBioInferData(bioInferData);
+            bioSearchData.setFuzzymatchTCM(null);
+            bioSearchData.setTotalNum(bioInferDao.getGeneNameInferCount(geneName));
+            return bioSearchData;
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     @Override
     public ArrayList<TcmInferData> getAndCacheTcmInference(final String tcmName){
         return null;

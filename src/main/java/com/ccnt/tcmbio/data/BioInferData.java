@@ -17,6 +17,12 @@ public class BioInferData {
     private String drugID;
 
     private String drugName;
+    
+    private String proteinAcce;
+    
+    private String geneName;
+    
+    private String targetName;
 
     public String getTcmName() {
         return tcmName;
@@ -56,5 +62,31 @@ public class BioInferData {
 
     public void setDrugName(final String drugName) {
         this.drugName = drugName;
+    }
+    
+
+    public String getProteinAcce() {
+        return proteinAcce;
+    }
+    
+    public void setProteinAcce(final String proteinAcce) {
+      this.proteinAcce = proteinAcce;
+    }
+    
+
+    public String getGeneName() {
+        return geneName;
+    }
+    
+    public void setGeneName(final String geneName) {
+      this.geneName = geneName;
+    }
+    
+    public String getTargetName() {
+      return targetName;
+    }
+  
+    public void setTargetName(final String targetName) {
+    	this.targetName = targetName;
     }
 }

@@ -11,9 +11,13 @@ import com.ccnt.tcmbio.data.BioInferData;
 
 public interface BioInferDao {
 
-    public ArrayList<BioInferData> getBioInference(String bio, Integer start, Integer offset);
+    public ArrayList<BioInferData> getDrugInference(String bio, Integer start, Integer offset);
 
-    public Integer getBioInferCount(String bio);
+    public Integer getDrugInferCount(String bio);
+    
+    public ArrayList<BioInferData> getGeneNameInference(String drugName, Integer start, Integer offset);
+
+    public Integer getGeneNameInferCount(String drugName);
 
     public ArrayList<String> getDiseaseName(String tcm, Integer start, Integer offset);
 

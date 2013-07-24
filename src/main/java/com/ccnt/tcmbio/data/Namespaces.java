@@ -25,5 +25,7 @@ public class Namespaces {
     public static final String DrugBankDiseaseIDPrefix = "http://linkedlifedata.com/resource/diseaseontology/id/DOID:";
 
     public static final String GeneIDPrefix = "http://purl.org/commons/record/ncbi_gene/";
+    
+    public static final String GeneNamefix = "http://purl.org/net/tcm/tcm.lifescience.ntu.edu.tw/id/gene/";
 
 }

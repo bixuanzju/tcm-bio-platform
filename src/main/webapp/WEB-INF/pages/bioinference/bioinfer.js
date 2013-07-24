@@ -8,29 +8,18 @@
 // ================= INIT FUNCTIONS ============================================
 $(function(){
 	
-	var url = $.url();
-	var keyword = url.param("kw");
-	var start = url.param("s");
-	var offset = url.param("o");
-	bioinfer.currPage = url.fsegment(1);
-		
-	if(keyword!=undefined && keyword!="" 
-		&& start!=undefined && offset!=undefined){
-		$('#bio-keyword').val(keyword);
-		var url = bioinfer.getUrl(keyword, start, offset);
-		bioinfer.getTcmInfer(url);
-//		tcminferVisualization.displaytcm.display(keyword);
-	}
+	
+	bioinfer.init();
 	
 	$("#bio-search").live('click', function(){
 		var keyword = $('#bio-keyword').val();
-		window.open("index.html?kw=" + keyword + "&s=" + bioinfer.start + "&o=" + bioinfer.offset, "_self");
+		window.open("index.html?t=" + bioinfer.getType() +  "&kw=" + keyword + "&s=" + bioinfer.start + "&o=" + bioinfer.offset, "_self");
 	});
 	
 	$('#bio-keyword').live('keypress', function(e){
 		if(e.keyCode==13){
 			var keyword = $('#bio-keyword').val();
-			window.open("index.html?kw=" + keyword + "&s=" + bioinfer.start + "&o=" + bioinfer.offset, "_self");
+			window.open("index.html?t=" + bioinfer.getType() + "&kw=" + keyword + "&s=" + bioinfer.start + "&o=" + bioinfer.offset, "_self");
 		}
 	});
 	
@@ -38,7 +27,8 @@ $(function(){
 
 // ================= UTILITY FUNCTIONS =========================================
 var bioinfer = {
-	urlTcmInfer : "../v0.9/bioinfer/",
+	urlDrugInfer : "../v0.9/bioinfer/searchdrug/kw=",
+	urlGeneNameInfer : "../v0.9/bioinfer/searchGeneName/kw=",
 	start : 0,
 	offset : 8,
 	totalNum : 0,
@@ -61,38 +51,106 @@ var bioinfer = {
   		left: 'auto' // Left position relative to parent in px
 	},
 	
-	getTcmInfer : function(url){
-		commonjs.ajax("GET", url, "", "", this.disDetailTab, commonjs.showErrorTip);
+	init : function() {
+
+		var url = $.url();
+		var keyword = url.param("kw");
+		var start = url.param("s");
+		var offset = url.param("o");
+		var type = url.param("t") == undefined ? url.param("t") : url.param("t").split('-');
+		bioinfer.currPage = url.fsegment(1);
+		
+		$('#bio-keyword').val(keyword);
+		
+		if(keyword!=undefined && keyword!=""){
+			if (type[1] == '1') {
+				$('#DrugNameCheckbox').prop('checked', true);
+				var url = bioinfer.getUrl(this.urlDrugInfer, keyword, start, offset);
+				bioinfer.getDrugInfer(url);
+			}
+			else if (type[1] == '2') {
+				$('#GeneNameCheckbox').prop('checked', true);
+				var url = bioinfer.getUrl(this.urlGeneNameInfer, keyword, start, offset);
+				bioinfer.getGeneNameInfer(url);
+			}
+			
+//			tcminferVisualization.displaytcm.display(keyword);
+		}
+		
+	},
+	
+	getDrugInfer : function(url){
+		commonjs.ajax("GET", url, "", "", this.showDrug, commonjs.showErrorTip);
 		$('.spin-progress').spin(this.spinopts);
 	},
 	
-	disDetailTab : function(data, textStatus, jqXHR){
+	getGeneNameInfer : function(url){
+		commonjs.ajax("GET", url, "", "", this.showGeneName, commonjs.showErrorTip);
+		$('.spin-progress').spin(this.spinopts);
+	},
+	
+	getType : function() {
+		var type = "";
+		if($('#DrugNameCheckbox').prop('checked') == true){
+			type = "-1";
+		}
+		if($('#GeneNameCheckbox').prop('checked') == true){
+			type = "-2";
+		}
+		return type;
+	},
+	
+	showDrug : function(data, textStatus, jqXHR) {
 		$('.spin-progress').spin(false);
 		data = commonjs.strToJson(data);
 		if(data.status==false){
 			// TODO
 		} else {
-			for(var i=0; i < data.bioInferData.length; i++) {
-				var htmlRowTab2 = bioinfer.toHtmlRowTab2(data.bioInferData[i]);
-				var htmlRowTab1 = bioinfer.toHtmlRowTab1(data.bioInferData[i]);
-				$('#tab2-table').append(htmlRowTab2);
-				$('#tab1-table').append(htmlRowTab1);
-			}
-			$('#total-or-fuzzytip').html("About " + data.totalNum + " results.");
-			bioinfer.totalNum = data.totalNum;
-			$('.pagination').pagination({
-				items : bioinfer.totalNum/8,
-				currentPage : bioinfer.currPage.split("-")[1],
-				onPageClick : function(pageNumber){
-					var keyword = $('#bio-keyword').val();
-					window.open("index.html?kw=" + keyword + "&s=" + (pageNumber-1) * bioinfer.offset + "&o=" + bioinfer.offset + "#page-" + pageNumber, "_self");
-				}
-			});
+			$('#tb1-head').html("<tr><th>Drug Name</th><th>Drug ID</th><th>Disease ID</th>" +
+					"<th>Disease Name</th><th>TCM Name</th></tr>");
+			$('#tb2-head').html("<tr><th>Drug Name</th><th>Drug ID</th><th>Disease ID</th>" +
+					"<th>Disease Name</th><th>TCM Name</th></tr>");
+			bioinfer.disDetailTab(data);
 		}
 	},
 	
-	getUrl : function(keyword, start, offset){
-		return this.urlTcmInfer + "kw=" + keyword + "&s=" + start + "&o=" + offset; 
+	showGeneName : function(data, textStatus, jqXHR) {
+		$('.spin-progress').spin(false);
+		data = commonjs.strToJson(data);
+		if(data.status==false){
+			// TODO
+		} else {
+			console.log(data);
+//			$('#tb1-head').html("<tr><th>Gene Name</th><th>Protein Accession</th><th>Target Name</th>" +
+//					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+//			$('#tb2-head').html("<tr><th>Gene Name</th><th>Protein Accession</th><th>Target Name</th>" +
+//					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+//			bioinfer.disDetailTab(data);
+		}
+	},
+	
+	disDetailTab : function(data){
+		
+		for(var i=0; i < data.bioInferData.length; i++) {
+			var htmlRowTab2 = bioinfer.toHtmlRowTab2(data.bioInferData[i]);
+			var htmlRowTab1 = bioinfer.toHtmlRowTab1(data.bioInferData[i]);
+			$('#tab2-table').append(htmlRowTab2);
+			$('#tab1-table').append(htmlRowTab1);
+		}
+		$('#total-or-fuzzytip').html("About " + data.totalNum + " results.");
+		bioinfer.totalNum = data.totalNum;
+		$('.pagination').pagination({
+			items : bioinfer.totalNum/8,
+			currentPage : bioinfer.currPage.split("-")[1],
+			onPageClick : function(pageNumber){
+				var keyword = $('#bio-keyword').val();
+				window.open("index.html?kw=" + keyword + "&s=" + (pageNumber-1) * bioinfer.offset + "&o=" + bioinfer.offset + "#page-" + pageNumber, "_self");
+			}
+		});		
+	},
+	
+	getUrl : function(prefix, keyword, start, offset){
+		return prefix + keyword + "&s=" + start + "&o=" + offset; 
 	},
 	
 	splitResource : function(resource){

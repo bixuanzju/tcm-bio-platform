@@ -191,13 +191,13 @@ var termsearch = {
 			type += "-6";
 		}
 		if($('#TCMCheckbox').prop('checked') == true){
-			type += "-3"
+			type += "-3";
 		}
 		if($('#ProteinCheckbox').prop('checked') == true){
-			type += "-4"
+			type += "-4";
 		}
 		if($('#DrugCheckbox').prop('checked') == true){
-			type += "-5"
+			type += "-5";
 		}
 		if(type==""){
 			type += "-a";
@@ -212,7 +212,6 @@ var termsearch = {
 		var offset = url.param("o");
 		var type = url.param("t") == undefined ? url.param("t") : url.param("t").split('-');
 		termsearch.currPage = url.fsegment(1);
-		
 		$('#search-keyword').val(keyword);
 		
 		if(keyword!=undefined && type!=undefined){
