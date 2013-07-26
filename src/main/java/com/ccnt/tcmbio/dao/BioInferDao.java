@@ -18,6 +18,14 @@ public interface BioInferDao {
     public ArrayList<BioInferData> getGeneNameInference(String drugName, Integer start, Integer offset);
 
     public Integer getGeneNameInferCount(String drugName);
+    
+    public ArrayList<BioInferData> getPAInference(String PAName, Integer start, Integer offset);
+
+    public Integer getPAInferCount(String PAName);
+    
+    public ArrayList<BioInferData> getGOIDInference(String GOID, Integer start, Integer offset);
+
+    public Integer getGOIDInferCount(String GOID);
 
     public ArrayList<String> getDiseaseName(String tcm, Integer start, Integer offset);
 

@@ -16,6 +16,10 @@ public interface BioInferService {
     public BioInferSearchData getDrugInference(String tcmName, Integer start, Integer offset);
     
     public BioInferSearchData getGeneNameInference(String geneName, Integer start, Integer offset);
+    
+    public BioInferSearchData getPAInference(String PAName, Integer start, Integer offset);
+    
+    public BioInferSearchData getGOIDInference(String GOID, Integer start, Integer offset);
 
     public ArrayList<TcmInferData> getAndCacheTcmInference(String tcmName);
 

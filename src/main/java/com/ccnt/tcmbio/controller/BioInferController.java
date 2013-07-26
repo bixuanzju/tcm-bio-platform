@@ -61,4 +61,34 @@ public class BioInferController {
         }
         return null;
     }
+    
+    @RequestMapping(value="/v0.9/bioinfer/searchPA/kw={PAName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody String getPAInference(@PathVariable final String PAName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/searchGeneName/kw={}&s={}&o={}", PAName, start, offset);
+        try {
+            final BioInferSearchData bioSearchDatas = bioInferService.getPAInference(PAName, start, offset);
+            final ObjectMapper objectMapper =  new ObjectMapper();
+            return objectMapper.writeValueAsString(bioSearchDatas);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/bioinfer/searchGOID/kw={GOID}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody String getGOIDInference(@PathVariable final String GOID, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/searchGeneName/kw={}&s={}&o={}", GOID, start, offset);
+        try {
+            final BioInferSearchData bioSearchDatas = bioInferService.getGOIDInference(GOID, start, offset);
+            final ObjectMapper objectMapper =  new ObjectMapper();
+            return objectMapper.writeValueAsString(bioSearchDatas);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

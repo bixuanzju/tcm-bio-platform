@@ -106,6 +106,82 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
 
         return null;
     }
+    
+    @Override
+    public ArrayList<BioInferData> getPAInference(final String PAName, final Integer start, final Integer offset){
+
+    	final String sparql = "sparql select * where {"
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId <" + PAName + "> } . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+    			+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+    			+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+    			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} "
+          + "limit(" + offset + ") offset(" + start + ")";
+
+        LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<BioInferData> bioInferDatas = new ArrayList<BioInferData>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+
+            for (final Map<String, Object> map : rows) {
+                final BioInferData bioInferData = new BioInferData();
+                bioInferData.setTcmName(map.get("tcmName").toString());
+                bioInferData.setDiseaseName(map.get("diseaseName").toString());
+                bioInferData.setDrugName(map.get("drugName").toString());
+                bioInferData.setProteinAcce(PAName);
+                bioInferData.setTargetName(map.get("targetName").toString());
+                bioInferDatas.add(bioInferData);
+            }
+            return bioInferDatas;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    @Override
+    public ArrayList<BioInferData> getGOIDInference(final String GOID, final Integer start, final Integer offset){
+
+    	final String sparql = "sparql select * where {"
+    			+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith <" + GOID + "> } . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+    			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+    			+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+    			+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+    			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} "
+          + "limit(" + offset + ") offset(" + start + ")";
+
+        LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<BioInferData> bioInferDatas = new ArrayList<BioInferData>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+
+            for (final Map<String, Object> map : rows) {
+                final BioInferData bioInferData = new BioInferData();
+                bioInferData.setGOID(GOID);
+                bioInferData.setTcmName(map.get("tcmName").toString());
+                bioInferData.setDiseaseName(map.get("diseaseName").toString());
+                bioInferData.setDrugName(map.get("drugName").toString());
+                bioInferData.setProteinAcce(map.get("proteinAcce").toString());
+                bioInferData.setTargetName(map.get("targetName").toString());
+                bioInferDatas.add(bioInferData);
+            }
+            return bioInferDatas;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
     public Integer getDrugInferCount(final String bio){
@@ -136,8 +212,57 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
       			+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
       			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
       			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
-      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
-      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+//      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+//      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+      			+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+      			+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+      			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} ";
+
+        LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+        try {
+            return getJdbcTemplate().queryForInt(sparql);
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+    
+    @Override
+    public Integer getPAInferCount(final String PAName){
+
+        final String sparql = "sparql select count(*) as ?count where {"
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId <" + PAName + "> } . "
+      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+//      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+//      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+      			+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+      			+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+      			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} ";
+
+        LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+        try {
+            return getJdbcTemplate().queryForInt(sparql);
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+    
+    @Override
+    public Integer getGOIDInferCount(final String GOID){
+
+        final String sparql = "sparql select count(*) as ?count where {"
+        		+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith <" + GOID + "> } . "
+      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+//      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+//      			+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
       			+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
       			+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
       			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} ";

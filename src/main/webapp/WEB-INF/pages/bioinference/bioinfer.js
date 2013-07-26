@@ -30,6 +30,8 @@ $(function(){
 var bioinfer = {
 	urlDrugInfer : "../v0.9/bioinfer/searchdrug/kw=",
 	urlGeneNameInfer : "../v0.9/bioinfer/searchGeneName/kw=",
+	urlPAInfer : "../v0.9/bioinfer/searchPA/kw=",
+	urlGOIDInfer : "../v0.9/bioinfer/searchGOID/kw=",
 	start : 0,
 	offset : 8,
 	totalNum : 0,
@@ -73,6 +75,16 @@ var bioinfer = {
 				var url = bioinfer.getUrl(this.urlGeneNameInfer, keyword, start, offset);
 				bioinfer.getGeneNameInfer(url);
 			}
+			else if (type[1] == '3') {
+				$('#PACheckbox').prop('checked', true);
+				var url = bioinfer.getUrl(this.urlPAInfer, keyword, start, offset);
+				bioinfer.getPAInfer(url);
+			}
+			else if (type[1] == '4') {
+				$('#GOIDCheckbox').prop('checked', true);
+				var url = bioinfer.getUrl(this.urlGOIDInfer, keyword, start, offset);
+				bioinfer.getGOIDInfer(url);
+			}
 			
 //			tcminferVisualization.displaytcm.display(keyword);
 		}
@@ -89,6 +101,16 @@ var bioinfer = {
 		$('.spin-progress').spin(this.spinopts);
 	},
 	
+	getPAInfer : function(url){
+		commonjs.ajax("GET", url, "", "", this.showPA, commonjs.showErrorTip);
+		$('.spin-progress').spin(this.spinopts);
+	},
+	
+	getGOIDInfer : function(url){
+		commonjs.ajax("GET", url, "", "", this.showGOID, commonjs.showErrorTip);
+		$('.spin-progress').spin(this.spinopts);
+	},
+	
 	getType : function() {
 		var type = "";
 		if($('#DrugNameCheckbox').prop('checked') == true){
@@ -96,6 +118,12 @@ var bioinfer = {
 		}
 		if($('#GeneNameCheckbox').prop('checked') == true){
 			type = "-2";
+		}
+		if($('#PACheckbox').prop('checked') == true){
+			type = "-3";
+		}
+		if($('#GOIDCheckbox').prop('checked') == true){
+			type = "-4";
 		}
 		return type;
 	},
@@ -123,6 +151,34 @@ var bioinfer = {
 			$('#tb1-head').html("<tr><th>Gene Name</th><th>Protein Accession</th><th>Target Name</th>" +
 					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
 			$('#tb2-head').html("<tr><th>Gene Name</th><th>Protein Accession</th><th>Target Name</th>" +
+					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+			bioinfer.disDetailTab(data);
+		}
+	},
+	
+	showPA : function(data, textStatus, jqXHR) {
+		$('.spin-progress').spin(false);
+		data = commonjs.strToJson(data);
+		if(data.status==false){
+			// TODO
+		} else {
+			$('#tb1-head').html("<tr><th>Protein Accession</th><th>Target Name</th>" +
+					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+			$('#tb2-head').html("<tr><th>Protein Accession</th><th>Target Name</th>" +
+					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+			bioinfer.disDetailTab(data);
+		}
+	},
+	
+	showGOID : function(data, textStatus, jqXHR) {
+		$('.spin-progress').spin(false);
+		data = commonjs.strToJson(data);
+		if(data.status==false){
+			// TODO
+		} else {
+			$('#tb1-head').html("<tr><th>GOID</th><th>Protein Accession</th><th>Target Name</th>" +
+					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+			$('#tb2-head').html("<tr><th>GOID</th><th>Protein Accession</th><th>Target Name</th>" +
 					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
 			bioinfer.disDetailTab(data);
 		}
@@ -175,6 +231,21 @@ var bioinfer = {
 			$('#tab1-table-sample-row .bio-5').html(bioinfer.splitResource(bioinferData.diseaseName));
 			$('#tab1-table-sample-row .bio-6').html(bioinfer.splitResource(bioinferData.tcmName));
 		}
+		else if (type == "-3") {
+			$('#tab1-table-sample-row .bio-1').html(bioinfer.splitResource(bioinferData.proteinAcce));
+			$('#tab1-table-sample-row .bio-2').html(bioinfer.splitResource(bioinferData.targetName));
+			$('#tab1-table-sample-row .bio-3').html(bioinfer.splitResource(bioinferData.drugName));
+			$('#tab1-table-sample-row .bio-4').html(bioinfer.splitResource(bioinferData.diseaseName));
+			$('#tab1-table-sample-row .bio-5').html(bioinfer.splitResource(bioinferData.tcmName));
+		}
+		else if (type == "-4") {
+			$('#tab1-table-sample-row .bio-1').html(bioinfer.splitResource(bioinferData.GOID));
+			$('#tab1-table-sample-row .bio-2').html(bioinfer.splitResource(bioinferData.proteinAcce));
+			$('#tab1-table-sample-row .bio-3').html(bioinfer.splitResource(bioinferData.targetName));
+			$('#tab1-table-sample-row .bio-4').html(bioinfer.splitResource(bioinferData.drugName));
+			$('#tab1-table-sample-row .bio-5').html(bioinfer.splitResource(bioinferData.diseaseName));
+			$('#tab1-table-sample-row .bio-6').html(bioinfer.splitResource(bioinferData.tcmName));
+		}
 		
 		return '<tr>' + $('#tab1-table-sample-row').html() + '</tr>';
 	},
@@ -190,6 +261,21 @@ var bioinfer = {
 		else if (type == "-2") {
 			console.log(bioinferData);
 			$('#tab2-table-sample-row .bio-1').html(bioinferData.geneName);
+			$('#tab2-table-sample-row .bio-2').html(bioinferData.proteinAcce);
+			$('#tab2-table-sample-row .bio-3').html(bioinferData.targetName);
+			$('#tab2-table-sample-row .bio-4').html(bioinferData.drugName);
+			$('#tab2-table-sample-row .bio-5').html(bioinferData.diseaseName);
+			$('#tab2-table-sample-row .bio-6').html(bioinferData.tcmName);
+		}
+		else if (type == "-3") {
+			$('#tab2-table-sample-row .bio-1').html(bioinferData.proteinAcce);
+			$('#tab2-table-sample-row .bio-2').html(bioinferData.targetName);
+			$('#tab2-table-sample-row .bio-3').html(bioinferData.drugName);
+			$('#tab2-table-sample-row .bio-4').html(bioinferData.diseaseName);
+			$('#tab2-table-sample-row .bio-5').html(bioinferData.tcmName);
+		}
+		else if (type == "-4") {
+			$('#tab2-table-sample-row .bio-1').html(bioinferData.GOID);
 			$('#tab2-table-sample-row .bio-2').html(bioinferData.proteinAcce);
 			$('#tab2-table-sample-row .bio-3').html(bioinferData.targetName);
 			$('#tab2-table-sample-row .bio-4').html(bioinferData.drugName);

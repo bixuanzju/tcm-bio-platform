@@ -96,6 +96,61 @@ public class BioInferServiceImpl implements BioInferService{
     }
     
     @Override
+    public BioInferSearchData getPAInference(final String PA, final Integer start, final Integer offset){
+
+        LOGGER.debug("get the bio inference result");
+        try {
+            final BioInferSearchData bioSearchData = new BioInferSearchData();
+//
+//            if (!searchTcm(geneName)) {
+//                bioSearchData.setFuzzymatchTCM(fuzzyMatchTcm(geneName));
+//                bioSearchData.setStatus(false);
+//                bioSearchData.setBioInferData(null);
+//                return bioSearchData;
+//            }
+
+            String PAName = UNIPROT + PA;
+            final ArrayList<BioInferData> bioInferData = bioInferDao.getPAInference(PAName, start, offset);
+            bioSearchData.setStatus(true);
+            bioSearchData.setBioInferData(bioInferData);
+            bioSearchData.setFuzzymatchTCM(null);
+            bioSearchData.setTotalNum(bioInferDao.getPAInferCount(PAName));
+            return bioSearchData;
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public BioInferSearchData getGOIDInference(final String GOID, final Integer start, final Integer offset){
+
+        LOGGER.debug("get the bio inference result");
+        try {
+            final BioInferSearchData bioSearchData = new BioInferSearchData();
+//
+//            if (!searchTcm(geneName)) {
+//                bioSearchData.setFuzzymatchTCM(fuzzyMatchTcm(geneName));
+//                bioSearchData.setStatus(false);
+//                bioSearchData.setBioInferData(null);
+//                return bioSearchData;
+//            }
+
+            String GOIDName = GeneOntology + "GO#" + GOID;
+            final ArrayList<BioInferData> bioInferData = bioInferDao.getGOIDInference(GOIDName, start, offset);
+            bioSearchData.setStatus(true);
+            bioSearchData.setBioInferData(bioInferData);
+            bioSearchData.setFuzzymatchTCM(null);
+            bioSearchData.setTotalNum(bioInferDao.getGOIDInferCount(GOIDName));
+            return bioSearchData;
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @Override
     public ArrayList<TcmInferData> getAndCacheTcmInference(final String tcmName){
         return null;
     }

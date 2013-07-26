@@ -23,6 +23,8 @@ public class BioInferData {
     private String geneName;
     
     private String targetName;
+    
+    private String GOID;
 
     public String getTcmName() {
         return tcmName;
@@ -89,4 +91,12 @@ public class BioInferData {
     public void setTargetName(final String targetName) {
     	this.targetName = targetName;
     }
+    
+    public String getGOID() {
+      return GOID;
+  }
+
+  public void setGOID(final String GOID) {
+      this.GOID = GOID;
+  }
 }
