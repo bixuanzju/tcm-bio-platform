@@ -20,7 +20,7 @@ public interface TcmInferDao {
 
     public ArrayList<String> getDiseaseID(String diseaseName, Integer start, Integer offset);
 
-    public ArrayList<String> getDrugID(String diseaseID, Integer start, Integer offset);
+    public ArrayList<String> getDrugName(String diseaseID, Integer start, Integer offset);
 
     public ArrayList<String> getTargetID(String drugID, Integer start, Integer offset);
 

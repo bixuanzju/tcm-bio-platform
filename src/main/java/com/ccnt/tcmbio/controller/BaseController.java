@@ -43,7 +43,7 @@ public class BaseController {
 
         try {
             final String test2[] = {"a", "b"};
-            final String test1 = hello;
+//            final String test1 = hello;
             final Jsontest testJsontest = new Jsontest();
             final ObjectMapper mapper =  new ObjectMapper();
             testJsontest.setJsonv1(hello);

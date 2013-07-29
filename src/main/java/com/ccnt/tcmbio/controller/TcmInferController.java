@@ -80,12 +80,12 @@ public class TcmInferController {
     }
 
     @RequestMapping(value="/v0.9/tcminfer/disid2drugid/kw={diseaseID}&s={start}&o={offset}", method=RequestMethod.GET)
-    public @ResponseBody Graphml getDrugID(@PathVariable final String diseaseID, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+    public @ResponseBody Graphml getDrugName(@PathVariable final String diseaseID, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
         LOGGER.debug("Received GET request: /v0.9/tcminfer/disid2drugid/kw={}&s={}&o={}", diseaseID, start, offset);
 
         try {
-            return tcmInferService.getDrugID(diseaseID, start, offset);
+            return tcmInferService.getDrugName(diseaseID, start, offset);
         } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -26,9 +26,9 @@ public interface TcmInferService {
 
     public Graphml getDiseaseID(String diseaseName, Integer start, Integer offset);
 
-    public Graphml getDrugID(String diseaseID, Integer start, Integer offset);
+    public Graphml getDrugName(String diseaseID, Integer start, Integer offset);
 
-    public Graphml getTargetID(String drugID, Integer start, Integer offset);
+    public Graphml getTargetID(String drugName, Integer start, Integer offset);
 
     public Graphml getProtein(String targetID, Integer start, Integer offset);
 

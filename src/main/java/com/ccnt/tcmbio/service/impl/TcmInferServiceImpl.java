@@ -8,9 +8,9 @@ package com.ccnt.tcmbio.service.impl;
 
 import static com.ccnt.tcmbio.data.Namespaces.DiseaseSome;
 import static com.ccnt.tcmbio.data.Namespaces.DrugBank;
-import static com.ccnt.tcmbio.data.Namespaces.GeneOntology;
 import static com.ccnt.tcmbio.data.Namespaces.TCMGeneDITID;
 import static com.ccnt.tcmbio.data.Namespaces.UNIPROT;
+import static com.ccnt.tcmbio.data.Namespaces.GeneNamefix;
 
 import java.util.ArrayList;
 
@@ -117,10 +117,10 @@ public class TcmInferServiceImpl implements TcmInferService{
     }
 
     @Override
-    public Graphml getDrugID(final String diseaseID, final Integer start, final Integer offset){
+    public Graphml getDrugName(final String diseaseID, final Integer start, final Integer offset){
         try {
             final String url = DiseaseSome + "diseases/" + diseaseID;
-            final ArrayList<String> leaves = tcmInferDao.getDrugID("<" + url + ">", start, offset);
+            final ArrayList<String> leaves = tcmInferDao.getDrugName("<" + url + ">", start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "possibleDrug", "edge#0", "G#0", "directed" ,"2", "3");
             return new Graphml(graph);
         } catch (final Exception e) {
@@ -133,8 +133,10 @@ public class TcmInferServiceImpl implements TcmInferService{
     @Override
     public Graphml getTargetID(final String drugID, final Integer start, final Integer offset){
         try {
-            final String url = DrugBank + "drugs/" + drugID;
-            final ArrayList<String> leaves = tcmInferDao.getTargetID("<" + url + ">", start, offset);
+//            final String url = DrugBank + "drugs/" + drugID;
+        		final String url = drugID;
+//            final ArrayList<String> leaves = tcmInferDao.getTargetID("<" + url + ">", start, offset);
+        		final ArrayList<String> leaves = tcmInferDao.getTargetID(url, start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "target", "edge#0", "G#0", "directed", "3", "4");
             return new Graphml(graph);
         } catch (final Exception e) {
@@ -175,7 +177,7 @@ public class TcmInferServiceImpl implements TcmInferService{
     @Override
     public Graphml getGeneProduct(final String geneID, final Integer start, final Integer offset){
         try {
-            final String url = GeneOntology + geneID;
+            final String url = GeneNamefix + geneID;
             final ArrayList<String> leaves = tcmInferDao.getGeneProduct("<" + url + ">", start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "label", "edge#0", "G#0", "directed" ,"6", "7");
             return new Graphml(graph);

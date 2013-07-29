@@ -198,6 +198,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word = keyword;
 			tcminferVisualization.vstate = "tcm";
+			$(".status").html("TCM -> Disease name");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/tcm2disease/kw="+keyword+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
@@ -218,6 +219,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word=keyword;
 			tcminferVisualization.vstate="diseasename";
+			$(".status").html("Disease name -> Disease ID");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/disname2disid/kw="+keyword+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
@@ -241,6 +243,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word=keyword;
 			tcminferVisualization.vstate="diseaseid";
+			$(".status").html("Disease ID -> Drug Name");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/disid2drugid/kw="+keyword+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
@@ -263,6 +266,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word=keyword;
 			tcminferVisualization.vstate="drugid";
+			$(".status").html("Disease Name -> Target ID");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/drugid2targetid/kw="+keyword+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
@@ -285,6 +289,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word=keyword;
 			tcminferVisualization.vstate="targetid";
+			$(".status").html("Target ID -> Protein Accession");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/target2protein/kw="+keyword+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
@@ -307,6 +312,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word=keyword;
 			tcminferVisualization.vstate="protein";
+			$(".status").html("Protein Accession -> Gene name");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/protein2geneid/kw="+keyword+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
@@ -330,6 +336,7 @@ var tcminferVisualization={
 		display : function(keyword){
 			this.word=keyword;
 			tcminferVisualization.vstate="geneid";
+			$(".status").html("Gene name -> Gene product");
 			var htmlobj=$.ajax({url:"../v0.9/tcminfer/geneid2geneprod/kw="+encodeURIComponent(keyword)+"&s=-1&o=0",async:false});
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
