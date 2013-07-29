@@ -27,11 +27,13 @@ public interface BioInferDao {
 
     public Integer getGOIDInferCount(String GOID);
 
-    public ArrayList<String> getDiseaseName(String tcm, Integer start, Integer offset);
+    public ArrayList<String> getDiseaseName(String disid, Integer start, Integer offset);
+    
+    public ArrayList<String> getTCMName(String disname, Integer start, Integer offset);
 
-    public ArrayList<String> getDiseaseID(String diseaseName, Integer start, Integer offset);
+    public ArrayList<String> getDiseaseID(String drugID, Integer start, Integer offset);
 
-    public ArrayList<String> getDrugID(String diseaseID, Integer start, Integer offset);
+    public ArrayList<String> getDrugID(String drugName, Integer start, Integer offset);
 
     public ArrayList<String> getTargetID(String drugID, Integer start, Integer offset);
 

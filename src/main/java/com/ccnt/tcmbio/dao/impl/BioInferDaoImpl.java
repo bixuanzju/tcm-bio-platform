@@ -6,18 +6,12 @@
 
 package com.ccnt.tcmbio.dao.impl;
 
-import static com.ccnt.tcmbio.data.GraphNames.Diseasome;
 import static com.ccnt.tcmbio.data.GraphNames.DrugBank;
 import static com.ccnt.tcmbio.data.GraphNames.Gene_Ontology;
 import static com.ccnt.tcmbio.data.GraphNames.Protein_Gene_Mapping;
-import static com.ccnt.tcmbio.data.GraphNames.TCMGeneDIT;
-import static com.ccnt.tcmbio.data.GraphNames.Tcm_Diseasesome_Mapping;
-import static com.ccnt.tcmbio.data.PredictNames.Diseasesome_PossibleDrug;
 import static com.ccnt.tcmbio.data.PredictNames.Drugbank_SwissprotId;
 import static com.ccnt.tcmbio.data.PredictNames.Drugbank_Target;
-import static com.ccnt.tcmbio.data.PredictNames.OWL_SameAs;
 import static com.ccnt.tcmbio.data.PredictNames.Rdfs_Label;
-import static com.ccnt.tcmbio.data.PredictNames.TCMGeneDIT_Treatment;
 import static com.ccnt.tcmbio.data.PredictNames.UniprotGO_ClassifiedWith;
 import java.util.ArrayList;
 import java.util.List;
@@ -280,10 +274,10 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
     
     @Override
-    public ArrayList<String> getDiseaseName(final String tcm, final Integer start, final Integer offset){
+    public ArrayList<String> getDiseaseName(final String disid, final Integer start, final Integer offset){
 
-        final String sparql = "sparql select * from <" + TCMGeneDIT + "> where {"
-                + tcm + " " + TCMGeneDIT_Treatment + " ?diseaseName}";
+        final String sparql = "sparql select * where {"
+        				+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs " + disid + " }}";
 
         LOGGER.debug("getDiseaseName - query virtuoso: {}", sparql);
 
@@ -303,12 +297,37 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
 
         return null;
     }
+    
+    @Override
+    public ArrayList<String> getTCMName(final String disname, final Integer start, final Integer offset){
+
+        final String sparql = "sparql select * where {"
+        		 + "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment " + disname + "}} ";
+
+        LOGGER.debug("getDiseaseName - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<String> diseaseNames = new ArrayList<String>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+
+            for(final Map<String, Object> row : rows){
+                diseaseNames.add(row.get("tcmName").toString());
+            }
+
+            return diseaseNames;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
-    public ArrayList<String> getDiseaseID(final String diseaseName, final Integer start, final Integer offset){
+    public ArrayList<String> getDiseaseID(final String drugID, final Integer start, final Integer offset){
 
-        final String sparql = "sparql select * from <" + Tcm_Diseasesome_Mapping + "> where {"
-                + diseaseName + " " + OWL_SameAs + " ?diseaseID}";
+        final String sparql = "sparql select * where {"
+        		 		+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug " + drugID + "}} ";
 
         LOGGER.debug("getDiseaseID - query virtuoso: {}", sparql);
 
@@ -330,11 +349,11 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
 
     @Override
-    public ArrayList<String> getDrugID(final String diseaseID, final Integer start, final Integer offset){
+    public ArrayList<String> getDrugID(final String drugName, final Integer start, final Integer offset){
 
-        final String sparql = "sparql select * from <" + Diseasome + "> where {"
-                + diseaseID + " " + Diseasesome_PossibleDrug + " ?drugID}";
-
+        final String sparql = "sparql select * where {"
+        				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label \"" + drugName+ "\"}}";
+        
         LOGGER.debug("getDrugID - query virtuoso: {}", sparql);
 
         try {

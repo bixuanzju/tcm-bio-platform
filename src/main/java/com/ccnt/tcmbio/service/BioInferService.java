@@ -27,11 +27,13 @@ public interface BioInferService {
 
     public ArrayList<String> fuzzyMatchTcm(String tcmName);
 
-    public Graphml getDiseaseName(String tcmName, Integer start, Integer offset);
+    public Graphml getDiseaseName(String disid, Integer start, Integer offset);
+    
+    public Graphml getTCMName(String disname, Integer start, Integer offset);
 
-    public Graphml getDiseaseID(String diseaseName, Integer start, Integer offset);
+    public Graphml getDiseaseID(String drugID, Integer start, Integer offset);
 
-    public Graphml getDrugID(String diseaseID, Integer start, Integer offset);
+    public Graphml getDrugID(String drugName, Integer start, Integer offset);
 
     public Graphml getTargetID(String drugID, Integer start, Integer offset);
 
