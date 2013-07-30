@@ -21,6 +21,9 @@
 	<mvc:resources mapping="/termsearch/*.js" location="/WEB-INF/pages/termsearch/"/>
 	<mvc:resources mapping="/tcminference/*.js" location="/WEB-INF/pages/tcminference/"/>
 	<mvc:resources mapping="/bioinference/*.js" location="/WEB-INF/pages/bioinference/"/>
+	<mvc:resources mapping="/about/*.js" location="/WEB-INF/pages/about/"/>
+	<mvc:resources mapping="/literature/*.js" location="/WEB-INF/pages/literature/"/>
+	<mvc:resources mapping="/publication/*.js" location="/WEB-INF/pages/publication/"/>
 	
 	<mvc:resources mapping="/entitysearch/*.html" location="/WEB-INF/pages/entitysearch/"/>
 	<mvc:resources mapping="/indexpage/*.html" location="/WEB-INF/pages/indexpage/"/>
@@ -29,6 +32,9 @@
 	<mvc:resources mapping="/termsearch/*.html" location="/WEB-INF/pages/termsearch/"/>
 	<mvc:resources mapping="/tcminference/*.html" location="/WEB-INF/pages/tcminference/"/>
 	<mvc:resources mapping="/bioinference/*.html" location="/WEB-INF/pages/bioinference/"/>
+	<mvc:resources mapping="/about/*.html" location="/WEB-INF/pages/about/"/>
+	<mvc:resources mapping="/literature/*.html" location="/WEB-INF/pages/literature/"/>
+	<mvc:resources mapping="/publication/*.html" location="/WEB-INF/pages/publication/"/>
 	<mvc:resources mapping="/lib/**" location="/WEB-INF/pages/lib/"/>
 	
 	<bean

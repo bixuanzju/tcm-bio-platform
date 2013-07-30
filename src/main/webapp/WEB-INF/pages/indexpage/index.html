@@ -1,44 +1,112 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>TCM-BIO</title>
-		<!--library-->
-		<script src="../lib/jquery-1.8.1.min.js"></script>
-		<script src="../lib/bootstrap/js/bootstrap.min.js"></script>
-		<link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-		<link href="../lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-		<!--application-->
-		<script src="indexpage.js"></script>
-		<link href="../lib/index.css" rel="stylesheet">
-	</head>
-	<body>
-		<div class="navbar">
-			<div class="navbar-inner navbar-fixed-top">
-				<a class="brand" href="../indexpage/index.html">TCM-BIO</a>
-				<ul class="nav">
-					<li><a href="../ontologysearch/index.html">TCM Ontology</a></li>
-					<li class="active"><a href="../termsearch/index.html">Term Search</a></li>
-					<li><a href="../mappingsearch/index.html">Data Sets</a></li>
-					<li><a href="../tcminference/index.html">BIO for TCM</a></li>
-					<li><a href="../bioinference/index.html">TCM for BIO</a></li>
-					<li><a href>Publication</a></li>
-					<li><a href>Literature</a></li>
-					<li><a href>About</a></li>
-				</ul>
-				<ul class="nav pull-right">
-					<li><a href="index.html"><i class="icon-black icon-question-sign"></i>HELP</a></li>
-				</ul>
-			</div>
-			<div>
-				<h1 class="text-center" style="margin-top: 200px; font-size: 80px">TCM-BIO</h1>
-				<p class="text-center" style="font-size: 20px; margin-top: 25px">Search Engine for Information Retrive of TCM and Biology Related Knowledge</p>
-			</div>
-			<div class="span9 offset3 form-inline" style="margin-top: 40px;">
-				<input type="text" class="span6" style="margin-left: 30px" id="keyword" placeholder="TCM, Disease, Drug, Gene, Protein......">
-				<button class="btn" style="margin-top:-2px" id="keyword-btn">Search</button>
-			</div>
-		</div>		
-	</body>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bio-TCM</title>
+<!--library-->
+<script src="../lib/jquery-1.8.1.min.js"></script>
+<script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+<link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="../lib/bootstrap/css/bootstrap-responsive.min.css"
+	rel="stylesheet">
+<!--application-->
+<script src="indexpage.js"></script>
+<link href="../lib/index.css" rel="stylesheet">
+<style type="text/css">
+body {
+	padding-top: 20px;
+	padding-bottom: 60px;
+}
+
+/* Custom container */
+.container {
+	margin: 0 auto;
+	max-width: 1000px;
+}
+
+.container>hr {
+	margin: 60px 0;
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+	margin: 80px 0;
+	text-align: center;
+}
+
+.jumbotron h1 {
+	font-size: 100px;
+	line-height: 1;
+}
+
+.jumbotron .lead {
+	font-size: 24px;
+	line-height: 1.25;
+}
+
+/* Supporting marketing content */
+.marketing {
+	margin: 60px 0;
+}
+
+.marketing p+h4 {
+	margin-top: 28px;
+}
+}
+</style>
+</head>
+<body>
+	<div class="navbar">
+		<div class="navbar-inner navbar-fixed-top">
+			<a class="brand" href="../indexpage/index.html">Bio-TCM</a>
+			<ul class="nav">
+				<li><a href="../ontologysearch/index.html">TCM Ontology</a></li>
+				<li class="active"><a href="../termsearch/index.html">Term
+						Search</a></li>
+				<li><a href="../mappingsearch/index.html">Data Sets</a></li>
+				<li><a href="../tcminference/index.html">Bio for TCM</a></li>
+				<li><a href="../bioinference/index.html">TCM for Bio</a></li>
+				<li><a href="../publication/index.html">Publication</a></li>
+				<li><a href="../literature/index.html">Literature</a></li>
+				<li><a href="../about/index.html">About</a></li>
+			</ul>
+			<ul class="nav pull-right">
+				<li><a href="index.html"><i
+						class="icon-black icon-question-sign"></i>HELP</a></li>
+			</ul>
+		</div>
+		<!-- <div>
+			<h1 class="text-center" style="margin-top: 200px; font-size: 80px">Bio-TCM</h1>
+			<p class="text-center" style="font-size: 20px; margin-top: 25px">
+				A Integrated Large-scale Linked Data Platform for the association
+				discovery of modern biomedicine and Chinese medicine</p>
+		</div>
+		<div class="span9 offset3 form-inline" style="margin-top: 40px;">
+			<input type="text" class="span6" style="margin-left: 30px"
+				id="keyword" placeholder="TCM, Disease, Drug, Gene, Protein......">
+			<button class="btn" style="margin-top: -2px" id="keyword-btn">Search</button>
+		</div> -->
+	</div>
+
+	<div class="container">
+
+		<!-- Jumbotron -->
+		<div class="jumbotron">
+			<h1>Bio-TCM</h1>
+			<p class="lead">A Integrated Large-scale Linked Data Platform for
+				the association discovery of modern biomedicine and Chinese
+				medicine.</p>
+
+			<input type="text" class="span6 input-medium search-query"
+				id="keyword" placeholder="TCM, Disease, Drug, Gene, Protein......">
+			<button type="submit" class="btn" id="keyword-btn">Search</button>
+		</div>
+
+
+	</div>
+	<!-- /container -->
+
+
+</body>
 </html>
