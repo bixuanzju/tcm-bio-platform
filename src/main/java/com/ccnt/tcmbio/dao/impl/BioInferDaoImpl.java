@@ -274,7 +274,7 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
     
     @Override
-    public ArrayList<String> getDiseaseName(final String disid, final Integer start, final Integer offset){
+    public ArrayList<String> getDisID2DisName(final String disid, final Integer start, final Integer offset){
 
         final String sparql = "sparql select * where {"
         				+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs " + disid + " }}";
@@ -299,7 +299,7 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
     
     @Override
-    public ArrayList<String> getTCMName(final String disname, final Integer start, final Integer offset){
+    public ArrayList<String> getDisName2TCMName(final String disname, final Integer start, final Integer offset){
 
         final String sparql = "sparql select * where {"
         		 + "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment " + disname + "}} ";
@@ -324,7 +324,7 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
 
     @Override
-    public ArrayList<String> getDiseaseID(final String drugID, final Integer start, final Integer offset){
+    public ArrayList<String> getDrugID2DisID(final String drugID, final Integer start, final Integer offset){
 
         final String sparql = "sparql select * where {"
         		 		+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug " + drugID + "}} ";
@@ -349,7 +349,7 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
 
     @Override
-    public ArrayList<String> getDrugID(final String drugName, final Integer start, final Integer offset){
+    public ArrayList<String> getDrugName2DrugID(final String drugName, final Integer start, final Integer offset){
 
         final String sparql = "sparql select * where {"
         				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label \"" + drugName+ "\"}}";
@@ -374,10 +374,11 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
 
     @Override
-    public ArrayList<String> getTargetID(final String drugID, final Integer start, final Integer offset){
+    public ArrayList<String> getPA2TargetName(final String PAname, final Integer start, final Integer offset){
 
-        final String sparql = "sparql select * from <" + DrugBank + "> where {"
-                + drugID + " " + Drugbank_Target + " ?targetID}";
+        final String sparql = "sparql select * where {"
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId " + PAname +"} . "
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName}}";
 
         LOGGER.debug("getTargetID - query virtuoso: {}", sparql);
 
@@ -386,7 +387,61 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
             final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
 
             for(final Map<String, Object> row : rows){
-                targetIDs.add(row.get("targetID").toString());
+                targetIDs.add(row.get("targetName").toString());
+            }
+
+            return targetIDs;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    @Override
+    public ArrayList<String> getTargetName2DrugName(final String targetName, final Integer start, final Integer offset){
+
+        final String sparql = "sparql select * where {"
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name \"" + targetName + "\" } . "
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} }";
+        
+        LOGGER.debug("getTargetID - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<String> targetIDs = new ArrayList<String>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+
+            for(final Map<String, Object> row : rows){
+                targetIDs.add(row.get("drugName").toString());
+            }
+
+            return targetIDs;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    @Override
+    public ArrayList<String> getDrugName2DisName(final String drugName, final Integer start, final Integer offset){
+
+        final String sparql = "sparql select * where {"
+        		+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label \"" + drugName + "\"} . "
+        		+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+        		+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID}}";
+        
+        LOGGER.debug("getTargetID - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<String> targetIDs = new ArrayList<String>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+
+            for(final Map<String, Object> row : rows){
+                targetIDs.add(row.get("diseaseName").toString());
             }
 
             return targetIDs;
@@ -399,10 +454,36 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
     }
 
     @Override
-    public ArrayList<String> getProtein(final String targetID, final Integer start, final Integer offset){
+    public ArrayList<String> getGeneName2PA(final String geneName, final Integer start, final Integer offset){
 
-        final String sparql = "sparql select * from <" + DrugBank + "> where {"
-                + targetID + " " + Drugbank_SwissprotId + " ?proteinAcce}";
+        final String sparql = "sparql select * where {"
+        		+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol>" + geneName + " } . "
+      			+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID}}";
+
+        LOGGER.debug("getProtein - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<String> proteinAcces = new ArrayList<String>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+
+            for(final Map<String, Object> row : rows){
+                proteinAcces.add(row.get("proteinAcce").toString());
+            }
+
+            return proteinAcces;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    @Override
+    public ArrayList<String> getGO2PA(final String GOName, final Integer start, final Integer offset){
+
+        final String sparql = "sparql select * where {"
+        		+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith " + GOName + "}}";
 
         LOGGER.debug("getProtein - query virtuoso: {}", sparql);
 
@@ -472,5 +553,5 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
 
         return null;
     }
-
+    
 }

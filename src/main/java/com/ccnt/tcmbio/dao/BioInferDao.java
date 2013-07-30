@@ -27,17 +27,23 @@ public interface BioInferDao {
 
     public Integer getGOIDInferCount(String GOID);
 
-    public ArrayList<String> getDiseaseName(String disid, Integer start, Integer offset);
+    public ArrayList<String> getDisID2DisName(String disid, Integer start, Integer offset);
     
-    public ArrayList<String> getTCMName(String disname, Integer start, Integer offset);
+    public ArrayList<String> getDisName2TCMName(String disname, Integer start, Integer offset);
 
-    public ArrayList<String> getDiseaseID(String drugID, Integer start, Integer offset);
+    public ArrayList<String> getDrugID2DisID(String drugID, Integer start, Integer offset);
 
-    public ArrayList<String> getDrugID(String drugName, Integer start, Integer offset);
+    public ArrayList<String> getDrugName2DrugID(String drugName, Integer start, Integer offset);
 
-    public ArrayList<String> getTargetID(String drugID, Integer start, Integer offset);
+    public ArrayList<String> getPA2TargetName(String PAname, Integer start, Integer offset);
+    
+    public ArrayList<String> getTargetName2DrugName(String target, Integer start, Integer offset);
+    
+    public ArrayList<String> getDrugName2DisName(String drugName, Integer start, Integer offset);
 
-    public ArrayList<String> getProtein(String targetID, Integer start, Integer offset);
+    public ArrayList<String> getGeneName2PA(String geneName, Integer start, Integer offset);
+    
+    public ArrayList<String> getGO2PA(String GOName, Integer start, Integer offset);
 
     public ArrayList<String> getGeneID(String protein, Integer start, Integer offset);
 

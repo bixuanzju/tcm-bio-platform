@@ -167,11 +167,11 @@ public class BioInferServiceImpl implements BioInferService{
 
 
     @Override
-    public Graphml getDiseaseName(final String disid, final Integer start, final Integer offset){
+    public Graphml getDisID2DisName(final String disid, final Integer start, final Integer offset){
         try {
  
             final String url = DiseaseSome + "diseases/" + disid;
-            final ArrayList<String> leaves = bioInferDao.getDiseaseName("<" + url + ">", start, offset);
+            final ArrayList<String> leaves = bioInferDao.getDisID2DisName("<" + url + ">", start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "diseaseName", "edge#0", "G#0", "directed", "2", "3");
             return new Graphml(graph);
         } catch (final Exception e) {
@@ -182,11 +182,11 @@ public class BioInferServiceImpl implements BioInferService{
     }
     
     @Override
-    public Graphml getTCMName(final String disname, final Integer start, final Integer offset){
+    public Graphml getDisName2TCMName(final String disname, final Integer start, final Integer offset){
       try {
 
           final String url = TCMGeneDITID + "disease/" + disname;
-          final ArrayList<String> leaves = bioInferDao.getTCMName("<" + url + ">", start, offset);
+          final ArrayList<String> leaves = bioInferDao.getDisName2TCMName("<" + url + ">", start, offset);
           final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "TCMName", "edge#0", "G#0", "directed", "3", "4");
           return new Graphml(graph);
       } catch (final Exception e) {
@@ -197,10 +197,10 @@ public class BioInferServiceImpl implements BioInferService{
   }
 
     @Override
-    public Graphml getDiseaseID(final String drugID, final Integer start, final Integer offset){
+    public Graphml getDrugID2DisID(final String drugID, final Integer start, final Integer offset){
         try {
             final String url = DrugBank + "drugs/" + drugID;
-            final ArrayList<String> leaves = bioInferDao.getDiseaseID("<" + url + ">", start, offset);
+            final ArrayList<String> leaves = bioInferDao.getDrugID2DisID("<" + url + ">", start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "possibleDisease", "edge#0", "G#0", "directed" ,"1", "2");
             return new Graphml(graph);
         } catch (final Exception e) {
@@ -211,10 +211,10 @@ public class BioInferServiceImpl implements BioInferService{
     }
 
     @Override
-    public Graphml getDrugID(final String drugName, final Integer start, final Integer offset){
+    public Graphml getDrugName2DrugID(final String drugName, final Integer start, final Integer offset){
         try {
             final String url = drugName;
-            final ArrayList<String> leaves = bioInferDao.getDrugID(url, start, offset);
+            final ArrayList<String> leaves = bioInferDao.getDrugName2DrugID(url, start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "label", "edge#0", "G#0", "directed" ,"0", "1");
             return new Graphml(graph);
         } catch (final Exception e) {
@@ -225,10 +225,24 @@ public class BioInferServiceImpl implements BioInferService{
     }
 
     @Override
-    public Graphml getTargetID(final String drugID, final Integer start, final Integer offset){
+    public Graphml getPA2TargetName(final String PAname, final Integer start, final Integer offset){
         try {
-            final String url = DrugBank + "drugs/" + drugID;
-            final ArrayList<String> leaves = bioInferDao.getTargetID("<" + url + ">", start, offset);
+            final String url = UNIPROT + PAname;
+            final ArrayList<String> leaves = bioInferDao.getPA2TargetName("<" + url + ">", start, offset);
+            final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "target", "edge#0", "G#0", "directed", "3", "4");
+            return new Graphml(graph);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public Graphml getTargetName2DrugName(final String targetName, final Integer start, final Integer offset){
+        try {
+            final String url = targetName;
+            final ArrayList<String> leaves = bioInferDao.getTargetName2DrugName(url, start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "target", "edge#0", "G#0", "directed", "3", "4");
             return new Graphml(graph);
         } catch (final Exception e) {
@@ -238,11 +252,40 @@ public class BioInferServiceImpl implements BioInferService{
         return null;
     }
 
+    
     @Override
-    public Graphml getProtein(final String targetID, final Integer start, final Integer offset){
+    public Graphml getDrugName2DisName(final String drugName, final Integer start, final Integer offset){
         try {
-            final String url = DrugBank + "targets/" + targetID;
-            final ArrayList<String> leaves = bioInferDao.getProtein("<" + url + ">", start, offset);
+            final String url = drugName;
+            final ArrayList<String> leaves = bioInferDao.getDrugName2DisName(url, start, offset);
+            final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "target", "edge#0", "G#0", "directed", "3", "4");
+            return new Graphml(graph);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public Graphml getGeneName2PA(final String geneName, final Integer start, final Integer offset){
+        try {
+            final String url = GeneNamefix + geneName;
+            final ArrayList<String> leaves = bioInferDao.getGeneName2PA("<" + url + ">", start, offset);
+            final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "swissprotId", "edge#0", "G#0", "directed", "4", "5");
+            return new Graphml(graph);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public Graphml getGO2PA(final String GOName, final Integer start, final Integer offset){
+        try {
+            final String url = GeneOntology + "GO#" +  GOName;
+            final ArrayList<String> leaves = bioInferDao.getGO2PA("<" + url + ">", start, offset);
             final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "swissprotId", "edge#0", "G#0", "directed", "4", "5");
             return new Graphml(graph);
         } catch (final Exception e) {

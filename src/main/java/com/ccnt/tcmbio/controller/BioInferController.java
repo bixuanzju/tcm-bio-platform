@@ -94,12 +94,12 @@ public class BioInferController {
     }
     
     @RequestMapping(value="/v0.9/bioinfer/drugName2drugID/kw={drugName}&s={start}&o={offset}", method=RequestMethod.GET)
-    public @ResponseBody Graphml getDrugID(@PathVariable final String drugName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+    public @ResponseBody Graphml getDrugName2DrugID(@PathVariable final String drugName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
         LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", drugName, start, offset);
 
         try {
-            return bioInferService.getDrugID(drugName, start, offset);
+            return bioInferService.getDrugName2DrugID(drugName, start, offset);
         } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -108,12 +108,12 @@ public class BioInferController {
     }
     
     @RequestMapping(value="/v0.9/bioinfer/drugID2diseaseID/kw={drugID}&s={start}&o={offset}", method=RequestMethod.GET)
-    public @ResponseBody Graphml getDiseaseID(@PathVariable final String drugID, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+    public @ResponseBody Graphml getDrugID2DisID(@PathVariable final String drugID, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
         LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", drugID, start, offset);
 
         try {
-            return bioInferService.getDiseaseID(drugID, start, offset);
+            return bioInferService.getDrugID2DisID(drugID, start, offset);
         } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -122,12 +122,12 @@ public class BioInferController {
     }
     
     @RequestMapping(value="/v0.9/bioinfer/disid2disname/kw={disid}&s={start}&o={offset}", method=RequestMethod.GET)
-    public @ResponseBody Graphml getDiseaseName(@PathVariable final String disid, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+    public @ResponseBody Graphml getDisID2DisName(@PathVariable final String disid, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
         LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", disid, start, offset);
 
         try {
-            return bioInferService.getDiseaseName(disid, start, offset);
+            return bioInferService.getDisID2DisName(disid, start, offset);
         } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -136,12 +136,54 @@ public class BioInferController {
     }
     
     @RequestMapping(value="/v0.9/bioinfer/disname2tcm/kw={disname}&s={start}&o={offset}", method=RequestMethod.GET)
-    public @ResponseBody Graphml getTCMName(@PathVariable final String disname, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+    public @ResponseBody Graphml getDisName2TCMName(@PathVariable final String disname, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
         LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", disname, start, offset);
 
         try {
-            return bioInferService.getTCMName(disname, start, offset);
+            return bioInferService.getDisName2TCMName(disname, start, offset);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/bioinfer/geneName2PA/kw={geneName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody Graphml getGeneName2PA(@PathVariable final String geneName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", geneName, start, offset);
+
+        try {
+            return bioInferService.getGeneName2PA(geneName, start, offset);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/bioinfer/PA2targetName/kw={PAname}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody Graphml getPA2TargetName(@PathVariable final String PAname, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", PAname, start, offset);
+
+        try {
+            return bioInferService.getPA2TargetName(PAname, start, offset);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/bioinfer/targetName2drugName/kw={targetName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody Graphml getTargetName2DrugName(@PathVariable final String targetName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", targetName, start, offset);
+
+        try {
+            return bioInferService.getTargetName2DrugName(targetName, start, offset);
         } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -149,4 +191,31 @@ public class BioInferController {
         return null;
     }
 
+    @RequestMapping(value="/v0.9/bioinfer/drugName2disName/kw={drugName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody Graphml getDrugName2DisName(@PathVariable final String drugName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", drugName, start, offset);
+
+        try {
+            return bioInferService.getDrugName2DisName(drugName, start, offset);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/bioinfer/GO2PA/kw={GOName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody Graphml getGO2PA(@PathVariable final String GOName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/drugName2drugID/kw={}&s={}&o={}", GOName, start, offset);
+
+        try {
+            return bioInferService.getGO2PA(GOName, start, offset);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

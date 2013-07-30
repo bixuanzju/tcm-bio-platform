@@ -8,7 +8,6 @@
 // ================= INIT FUNCTIONS ============================================
 $(function(){
 	
-	
 	bioinfer.init();
 
 	
@@ -69,22 +68,25 @@ var bioinfer = {
 				$('#DrugNameCheckbox').prop('checked', true);
 				var url = bioinfer.getUrl(this.urlDrugInfer, keyword, start, offset);
 				bioinfer.getDrugInfer(url);
-				tcminferVisualization.displaydrug.display(keyword);
+				tcminferVisualization.displayDrugNameToDrugID.display(keyword, null);
 			}
 			else if (type[1] == '2') {
 				$('#GeneNameCheckbox').prop('checked', true);
 				var url = bioinfer.getUrl(this.urlGeneNameInfer, keyword, start, offset);
 				bioinfer.getGeneNameInfer(url);
+				tcminferVisualization.displayGeneNameToPA.display(keyword, null);
 			}
 			else if (type[1] == '3') {
 				$('#PACheckbox').prop('checked', true);
 				var url = bioinfer.getUrl(this.urlPAInfer, keyword, start, offset);
 				bioinfer.getPAInfer(url);
+				tcminferVisualization.displayPAToTargetName.display(keyword, null);
 			}
 			else if (type[1] == '4') {
 				$('#GOIDCheckbox').prop('checked', true);
 				var url = bioinfer.getUrl(this.urlGOIDInfer, keyword, start, offset);
 				bioinfer.getGOIDInfer(url);
+				tcminferVisualization.displayGOToPA.display(keyword, null);
 			}
 			
 //			tcminferVisualization.displaytcm.display(keyword);
@@ -186,7 +188,6 @@ var bioinfer = {
 	},
 	
 	disDetailTab : function(data){
-		
 		for(var i=0; i < data.bioInferData.length; i++) {
 			
 			var htmlRowTab2 = bioinfer.toHtmlRowTab2(data.bioInferData[i], bioinfer.getType());
@@ -240,7 +241,7 @@ var bioinfer = {
 			$('#tab1-table-sample-row .bio-5').html(bioinfer.splitResource(bioinferData.tcmName));
 		}
 		else if (type == "-4") {
-			$('#tab1-table-sample-row .bio-1').html(bioinfer.splitResource(bioinferData.GOID));
+			$('#tab1-table-sample-row .bio-1').html(bioinfer.splitResource(bioinferData.goid));
 			$('#tab1-table-sample-row .bio-2').html(bioinfer.splitResource(bioinferData.proteinAcce));
 			$('#tab1-table-sample-row .bio-3').html(bioinfer.splitResource(bioinferData.targetName));
 			$('#tab1-table-sample-row .bio-4').html(bioinfer.splitResource(bioinferData.drugName));
@@ -260,7 +261,6 @@ var bioinfer = {
 			$('#tab2-table-sample-row .bio-5').html(bioinferData.tcmName);
 		}
 		else if (type == "-2") {
-			console.log(bioinferData);
 			$('#tab2-table-sample-row .bio-1').html(bioinferData.geneName);
 			$('#tab2-table-sample-row .bio-2').html(bioinferData.proteinAcce);
 			$('#tab2-table-sample-row .bio-3').html(bioinferData.targetName);
@@ -276,7 +276,7 @@ var bioinfer = {
 			$('#tab2-table-sample-row .bio-5').html(bioinferData.tcmName);
 		}
 		else if (type == "-4") {
-			$('#tab2-table-sample-row .bio-1').html(bioinferData.GOID);
+			$('#tab2-table-sample-row .bio-1').html(bioinferData.goid);
 			$('#tab2-table-sample-row .bio-2').html(bioinferData.proteinAcce);
 			$('#tab2-table-sample-row .bio-3').html(bioinferData.targetName);
 			$('#tab2-table-sample-row .bio-4').html(bioinferData.drugName);
@@ -354,9 +354,34 @@ var tcminferVisualization={
 		tcminferVisualization.selectNode="";
 	},
 	
-	displaydrug :{ 
+	displayGOToPA :{ 
 		word : "",
-		display : function(keyword){
+		prev : null,
+		display : function(keyword, prev){
+			this.word = keyword;
+			tcminferVisualization.vstate = "drug";
+			$(".status").html("GOID -> Protein Accession");
+			var htmlobj=$.ajax({url:"../v0.9/bioinfer/GO2PA/kw="+keyword+"&s=-1&o=0",async:false});
+			tcminferVisualization.drawgraph(htmlobj.responseText);
+			tcminferVisualization.clearSelect();
+			$("#vback").unbind("click");
+			$("#vback").attr("disable",true);
+			$("#vgo").unbind("click");
+			$("#vgo").click( function(){
+				if(tcminferVisualization.selectId==""){
+				}
+				else if(tcminferVisualization.selectId!="node#0"){
+					tcminferVisualization.displayPAToTargetName.display(tcminferVisualization.selectNode, tcminferVisualization.displayGOToPA);
+				}
+			});
+			
+		}
+	},
+	
+	displayDrugNameToDrugID :{ 
+		word : "",
+		prev : null,
+		display : function(keyword, prev){
 			this.word = keyword;
 			tcminferVisualization.vstate = "drug";
 			$(".status").html("Drug name -> Drug ID");
@@ -370,17 +395,19 @@ var tcminferVisualization={
 				if(tcminferVisualization.selectId==""){
 				}
 				else if(tcminferVisualization.selectId!="node#0"){
-					tcminferVisualization.displaydrugID.display(tcminferVisualization.selectNode);
+					tcminferVisualization.displayDrugIDToDisID.display(tcminferVisualization.selectNode, tcminferVisualization.displayDrugNameToDrugID);
 				}
 			});
 			
 		}
 	},
 	
-	displaydrugID :{
+	displayDrugIDToDisID :{
 		word : "",
-		display : function(keyword){
+		prev : null,
+		display : function(keyword, prev){
 			this.word=keyword;
+			this.prev = prev;
 			tcminferVisualization.vstate="drugID";
 			$(".status").html("Drug ID -> Disease ID");
 			var htmlobj=$.ajax({url:"../v0.9/bioinfer/drugID2diseaseID/kw="+keyword+"&s=-1&o=0",async:false});
@@ -389,23 +416,27 @@ var tcminferVisualization={
 			$('#vback').removeAttr("disabled");
 			$("#vback").unbind("click");
 			$("#vback").click(  function(){
-				tcminferVisualization.displaydrug.display(tcminferVisualization.displaydrug.word);
+				tcminferVisualization.displayDrugIDToDisID.prev.display(tcminferVisualization.displayDrugIDToDisID.prev.word,
+						tcminferVisualization.displayDrugIDToDisID.prev.prev);
 			});
 			$("#vgo").unbind("click");
 			$("#vgo").click( function(){
 				if(tcminferVisualization.selectId==""){
 				}
 				else if(tcminferVisualization.selectId!="node#0"){
-					tcminferVisualization.displaydiseaseid.display(tcminferVisualization.selectNode);
+					tcminferVisualization.displayDisIDToDisName.display(tcminferVisualization.selectNode, 
+							tcminferVisualization.displayDrugIDToDisID);
 				}
 			});
 		}
 	},
 	
-	displaydiseaseid :{
+	displayDisIDToDisName :{
 		word : "",
-		display : function(keyword){
+		prev : null,
+		display : function(keyword, prev){
 			this.word=keyword;
+			this.prev = prev;
 			tcminferVisualization.vstate="diseaseid";
 			$(".status").html("Disease ID -> Disease Name");
 			var htmlobj=$.ajax({url:"../v0.9/bioinfer/disid2disname/kw="+keyword+"&s=-1&o=0",async:false});
@@ -413,91 +444,156 @@ var tcminferVisualization={
 			tcminferVisualization.clearSelect();
 			$("#vback").unbind("click");
 			$("#vback").click(  function(){
-				tcminferVisualization.displaydrugID.display(tcminferVisualization.displaydrugID.word);
+				tcminferVisualization.displayDisIDToDisName.prev.display(tcminferVisualization.displayDisIDToDisName.prev.word, 
+						tcminferVisualization.displayDisIDToDisName.prev.prev);
 			});
 			$("#vgo").unbind("click");
 			$("#vgo").click( function(){
 				if(tcminferVisualization.selectId==""){
 				}
 				else if(tcminferVisualization.selectId!="node#0"){
-					tcminferVisualization.displaytcm.display(tcminferVisualization.selectNode);
+					tcminferVisualization.displayDisNameToTCM.display(tcminferVisualization.selectNode, 
+							tcminferVisualization.displayDisIDToDisName);
 				}
 			});
 		}
 	},
 	
-	displaytcm : {
-	word : "",
-	display : function(keyword){
-		this.word=keyword;
-		tcminferVisualization.vstate="tcm";
-		$(".status").html("Disease name -> TCM");
-		var htmlobj=$.ajax({url:"../v0.9/bioinfer/disname2tcm/kw="+keyword+"&s=-1&o=0",async:false});
-		tcminferVisualization.drawgraph(htmlobj.responseText);
-		tcminferVisualization.clearSelect();
-		$("#vback").unbind("click");
-		$("#vback").click(  function(){
-			tcminferVisualization.displaydiseaseid.display(tcminferVisualization.displaydiseaseid.word);
-		});
-		$("#vgo").unbind("click");
-		$("#vgo").attr('disable',true);
+	displayDisNameToTCM : {
+		word : "",
+		prev : null,
+		display : function(keyword, prev){
+			this.word=keyword;
+			this.prev = prev;
+			tcminferVisualization.vstate="tcm";
+			$(".status").html("Disease name -> TCM");
+			var htmlobj=$.ajax({url:"../v0.9/bioinfer/disname2tcm/kw="+keyword+"&s=-1&o=0",async:false});
+			tcminferVisualization.drawgraph(htmlobj.responseText);
+			tcminferVisualization.clearSelect();
+			$("#vback").unbind("click");
+			$("#vback").click(  function(){
+				tcminferVisualization.displayDisNameToTCM.prev.display(tcminferVisualization.displayDisNameToTCM.prev.word,
+						tcminferVisualization.displayDisNameToTCM.prev.prev);
+			});
+			$("#vgo").unbind("click");
+			$("#vgo").attr('disable',true);
+		}
+	},
+	
+	displayGeneNameToPA :{ 
+		word : "",
+		prev : null,
+		display : function(keyword){
+			this.word = keyword;
+			tcminferVisualization.vstate = "gene";
+			$(".status").html("Gene name -> Protein Accession");
+			var htmlobj=$.ajax({url:"../v0.9/bioinfer/geneName2PA/kw="+keyword+"&s=-1&o=0",async:false});
+			tcminferVisualization.drawgraph(htmlobj.responseText);
+			tcminferVisualization.clearSelect();
+			$("#vback").unbind("click");
+			$("#vback").attr("disable",true);
+			$("#vgo").unbind("click");
+			$("#vgo").click( function(){
+				if(tcminferVisualization.selectId==""){
+				}
+				else if(tcminferVisualization.selectId!="node#0"){
+					tcminferVisualization.displayPAToTargetName.display(tcminferVisualization.selectNode, 
+							tcminferVisualization.displayGeneNameToPA);
+				}
+			});
+			
+		}
+	},
+	
+	displayPAToTargetName :{
+		word : "",
+		prev : null,
+		display : function(keyword, prev){
+			this.word=keyword;
+			this.prev = prev;
+			tcminferVisualization.vstate="diseaseid";
+			$(".status").html("Protein Accession -> Target name");
+			var htmlobj=$.ajax({url:"../v0.9/bioinfer/PA2targetName/kw="+keyword+"&s=-1&o=0",async:false});
+			tcminferVisualization.drawgraph(htmlobj.responseText);
+			tcminferVisualization.clearSelect();
+			$("#vback").unbind("click");
+			if (prev == null) {
+				$("#vback").attr("disable",true);
+			}
+			else {
+				$("#vback").click(  function(){
+					tcminferVisualization.displayPAToTargetName.prev.display(tcminferVisualization.displayPAToTargetName.prev.word,
+							tcminferVisualization.displayPAToTargetName.prev.prev);
+				});
+			}
+			$("#vgo").unbind("click");
+			$("#vgo").click( function(){
+				if(tcminferVisualization.selectId==""){
+				}
+				else if(tcminferVisualization.selectId!="node#0"){
+					tcminferVisualization.displayTargetNameToDrugName.display(tcminferVisualization.selectNode, 
+							tcminferVisualization.displayPAToTargetName);
+				}
+			});
+		}
+	},
+	
+	displayTargetNameToDrugName :{
+		word : "",
+		prev : null,
+		display : function(keyword, prev){
+			this.word=keyword;
+			this.prev = prev;
+			tcminferVisualization.vstate="diseaseid";
+			$(".status").html("Target name -> Drug name");
+			var htmlobj=$.ajax({url:"../v0.9/bioinfer/targetName2drugName/kw="+keyword+"&s=-1&o=0",async:false});
+			tcminferVisualization.drawgraph(htmlobj.responseText);
+			tcminferVisualization.clearSelect();
+			$("#vback").unbind("click");
+			$("#vback").click(  function(){
+				tcminferVisualization.displayTargetNameToDrugName.prev.display(tcminferVisualization.displayTargetNameToDrugName.prev.word,
+						tcminferVisualization.displayTargetNameToDrugName.prev.prev);
+			});
+			$("#vgo").unbind("click");
+			$("#vgo").click( function(){
+				if(tcminferVisualization.selectId==""){
+				}
+				else if(tcminferVisualization.selectId!="node#0"){
+					tcminferVisualization.displayDrugNameToDisName.display(tcminferVisualization.selectNode, 
+							tcminferVisualization.displayTargetNameToDrugName);
+				}
+			});
+		}
+	},
+	
+	displayDrugNameToDisName :{
+		word : "",
+		prev : null,
+		display : function(keyword, prev){
+			this.word=keyword;
+			this.prev = prev
+			tcminferVisualization.vstate="diseaseid";
+			$(".status").html("Drug name -> Disease name");
+			var htmlobj=$.ajax({url:"../v0.9/bioinfer/drugName2disName/kw="+keyword+"&s=-1&o=0",async:false});
+			tcminferVisualization.drawgraph(htmlobj.responseText);
+			tcminferVisualization.clearSelect();
+			$("#vback").unbind("click");
+			$("#vback").click(  function(){
+				tcminferVisualization.displayDrugNameToDisName.prev.display(tcminferVisualization.displayDrugNameToDisName.prev.word,
+						tcminferVisualization.displayDrugNameToDisName.prev.prev);
+			});
+			$("#vgo").unbind("click");
+			$("#vgo").click( function(){
+				if(tcminferVisualization.selectId==""){
+				}
+				else if(tcminferVisualization.selectId!="node#0"){
+					tcminferVisualization.displayDisNameToTCM.display(tcminferVisualization.selectNode, 
+							tcminferVisualization.displayDrugNameToDisName);
+				}
+			});
+		}
 	}
-}
 	
-//	displaydiseasename :{
-//		word : "",
-//		display : function(keyword){
-//			this.word=keyword;
-//			tcminferVisualization.vstate="diseasename";
-//			$(".status").html("Disease name -> Disease ID");
-//			var htmlobj=$.ajax({url:"../v0.9/tcminfer/disname2disid/kw="+keyword+"&s=-1&o=0",async:false});
-//			tcminferVisualization.drawgraph(htmlobj.responseText);
-//			tcminferVisualization.clearSelect();
-//			$('#vback').removeAttr("disabled");
-//			$("#vback").unbind("click");
-//			$("#vback").click(  function(){
-//				tcminferVisualization.displaydrugID.display(tcminferVisualization.displaydrugID.word);
-//			});	
-////			$("#vgo").unbind("click");
-////			$("#vgo").click( function(){
-////				if(tcminferVisualization.selectId==""){
-////				}
-////				else if(tcminferVisualization.selectId!="node#0"){
-////					tcminferVisualization.displaydiseaseid.display(tcminferVisualization.selectNode);
-////				}
-////			});
-//			$("#vgo").unbind("click");
-//			$("#vgo").attr('disable',true);
-//		}
-//	}
-	
-
-	
-	
-	
-//	displaytargetid :{
-//		word : "",
-//		display : function(keyword){
-//			this.word=keyword;
-//			tcminferVisualization.vstate="targetid";
-//			$(".status").html("Target ID -> Protein Accession");
-//			var htmlobj=$.ajax({url:"../v0.9/tcminfer/target2protein/kw="+keyword+"&s=-1&o=0",async:false});
-//			tcminferVisualization.drawgraph(htmlobj.responseText);
-//			tcminferVisualization.clearSelect();
-//			$("#vback").unbind("click");
-//			$("#vback").click(  function(){
-//				tcminferVisualization.displaydrugid.display(tcminferVisualization.displaydrugid.word);
-//			});
-//			$("#vgo").unbind("click");
-//			$("#vgo").click(  function(){
-//				if(tcminferVisualization.selectId==""){
-//				}
-//				else if(tcminferVisualization.selectId!="node#0" ){
-//					tcminferVisualization.displayprotein.display(tcminferVisualization.selectNode);
-//				}
-//			});
-//		}
-//	},
 //	displayprotein : {
 //		word : "",
 //		display : function(keyword){
