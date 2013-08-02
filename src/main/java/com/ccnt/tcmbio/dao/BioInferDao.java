@@ -26,6 +26,10 @@ public interface BioInferDao {
     public ArrayList<BioInferData> getGOIDInference(String GOID, Integer start, Integer offset);
 
     public Integer getGOIDInferCount(String GOID);
+    
+    public ArrayList<BioInferData> getDisInference(String disName, Integer start, Integer offset);
+
+    public Integer getDisInferCount(String disName);
 
     public ArrayList<String> getDisID2DisName(String disid, Integer start, Integer offset);
     

@@ -93,6 +93,21 @@ public class BioInferController {
         return null;
     }
     
+    @RequestMapping(value="/v0.9/bioinfer/searchDis/kw={disName}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody String getDisInference(@PathVariable final String disName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/bioinfer/searchGOID/kw={}&s={}&o={}", disName, start, offset);
+        try {
+            final BioInferSearchData bioSearchDatas = bioInferService.getDisInference(disName, start, offset);
+            final ObjectMapper objectMapper =  new ObjectMapper();
+            return objectMapper.writeValueAsString(bioSearchDatas);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     @RequestMapping(value="/v0.9/bioinfer/drugName2drugID/kw={drugName}&s={start}&o={offset}", method=RequestMethod.GET)
     public @ResponseBody Graphml getDrugName2DrugID(@PathVariable final String drugName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 

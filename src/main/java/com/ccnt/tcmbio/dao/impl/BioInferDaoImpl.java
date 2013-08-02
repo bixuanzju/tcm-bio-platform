@@ -6,11 +6,8 @@
 
 package com.ccnt.tcmbio.dao.impl;
 
-import static com.ccnt.tcmbio.data.GraphNames.DrugBank;
 import static com.ccnt.tcmbio.data.GraphNames.Gene_Ontology;
 import static com.ccnt.tcmbio.data.GraphNames.Protein_Gene_Mapping;
-import static com.ccnt.tcmbio.data.PredictNames.Drugbank_SwissprotId;
-import static com.ccnt.tcmbio.data.PredictNames.Drugbank_Target;
 import static com.ccnt.tcmbio.data.PredictNames.Rdfs_Label;
 import static com.ccnt.tcmbio.data.PredictNames.UniprotGO_ClassifiedWith;
 import java.util.ArrayList;
@@ -176,6 +173,35 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
 
         return null;
     }
+    
+    @Override
+    public ArrayList<BioInferData> getDisInference(final String disName, final Integer start, final Integer offset){
+
+    	
+    	final String sparql = "sparql select * where {"
+    			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment <" + disName + ">}} "
+          + "limit(" + offset + ") offset(" + start + ")";
+
+        LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+        try {
+            final ArrayList<BioInferData> bioInferDatas = new ArrayList<BioInferData>();
+            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+          
+            for (final Map<String, Object> map : rows) {
+                final BioInferData bioInferData = new BioInferData();
+                bioInferData.setTcmName(map.get("tcmName").toString());
+                bioInferData.setDiseaseName(disName);
+                bioInferDatas.add(bioInferData);
+            }
+            return bioInferDatas;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
     public Integer getDrugInferCount(final String bio){
@@ -260,6 +286,24 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao{
       			+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
       			+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
       			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} ";
+
+        LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+        try {
+            return getJdbcTemplate().queryForInt(sparql);
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+    
+    @Override
+    public Integer getDisInferCount(final String disName){
+
+        final String sparql = "sparql select count(*) as ?count where {"
+      			+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment <" + disName + ">}} ";
 
         LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
 

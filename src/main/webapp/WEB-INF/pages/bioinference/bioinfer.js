@@ -31,6 +31,7 @@ var bioinfer = {
 	urlGeneNameInfer : "../v0.9/bioinfer/searchGeneName/kw=",
 	urlPAInfer : "../v0.9/bioinfer/searchPA/kw=",
 	urlGOIDInfer : "../v0.9/bioinfer/searchGOID/kw=",
+	urlDisInfer : "../v0.9/bioinfer/searchDis/kw=",
 	start : 0,
 	offset : 8,
 	totalNum : 0,
@@ -88,6 +89,12 @@ var bioinfer = {
 				bioinfer.getGOIDInfer(url);
 				tcminferVisualization.displayGOToPA.display(keyword, null);
 			}
+			else if (type[1] == '5') {
+				$('#DisCheckbox').prop('checked', true);
+				var url = bioinfer.getUrl(this.urlDisInfer, keyword, start, offset);
+				bioinfer.getDisInfer(url);
+				tcminferVisualization.displayDisNameToTCM.display(keyword, null);
+			}
 			
 //			tcminferVisualization.displaytcm.display(keyword);
 		}
@@ -114,6 +121,11 @@ var bioinfer = {
 		$('.spin-progress').spin(this.spinopts);
 	},
 	
+	getDisInfer : function(url){
+		commonjs.ajax("GET", url, "", "", this.showDis, commonjs.showErrorTip);
+		$('.spin-progress').spin(this.spinopts);
+	},
+	
 	getType : function() {
 		var type = "";
 		if($('#DrugNameCheckbox').prop('checked') == true){
@@ -127,6 +139,9 @@ var bioinfer = {
 		}
 		if($('#GOIDCheckbox').prop('checked') == true){
 			type = "-4";
+		}
+		if($('#DisCheckbox').prop('checked') == true){
+			type = "-5";
 		}
 		return type;
 	},
@@ -183,6 +198,19 @@ var bioinfer = {
 					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
 			$('#tb2-head').html("<tr><th>GOID</th><th>Protein Accession</th><th>Target Name</th>" +
 					"<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+			bioinfer.disDetailTab(data);
+		}
+	},
+	
+	showDis : function(data, textStatus, jqXHR) {
+		$('.spin-progress').spin(false);
+		data = commonjs.strToJson(data);
+		if(data.status==false){
+			// TODO
+		} else {
+			console.log(data);
+			$('#tb1-head').html("<tr><th>Disease Name</th><th>TCM Name</th></tr>");
+			$('#tb2-head').html("<tr><th>Disease Name</th><th>TCM Name</th></tr>");
 			bioinfer.disDetailTab(data);
 		}
 	},
@@ -248,6 +276,10 @@ var bioinfer = {
 			$('#tab1-table-sample-row .bio-5').html(bioinfer.splitResource(bioinferData.diseaseName));
 			$('#tab1-table-sample-row .bio-6').html(bioinfer.splitResource(bioinferData.tcmName));
 		}
+		else if (type == "-5") {
+			$('#tab1-table-sample-row .bio-1').html(bioinfer.splitResource(bioinferData.diseaseName));
+			$('#tab1-table-sample-row .bio-2').html(bioinfer.splitResource(bioinferData.tcmName));
+		}
 		
 		return '<tr>' + $('#tab1-table-sample-row').html() + '</tr>';
 	},
@@ -282,6 +314,10 @@ var bioinfer = {
 			$('#tab2-table-sample-row .bio-4').html(bioinferData.drugName);
 			$('#tab2-table-sample-row .bio-5').html(bioinferData.diseaseName);
 			$('#tab2-table-sample-row .bio-6').html(bioinferData.tcmName);
+		}
+		else if (type == "-5") {
+			$('#tab2-table-sample-row .bio-1').html(bioinferData.diseaseName);
+			$('#tab2-table-sample-row .bio-2').html(bioinferData.tcmName);
 		}
 		return '<tr>' + $('#tab2-table-sample-row').html() + '</tr>';
 	}
@@ -471,6 +507,9 @@ var tcminferVisualization={
 			tcminferVisualization.drawgraph(htmlobj.responseText);
 			tcminferVisualization.clearSelect();
 			$("#vback").unbind("click");
+			if (prev == null) {
+				$("#vback").attr("disable",true);
+			}
 			$("#vback").click(  function(){
 				tcminferVisualization.displayDisNameToTCM.prev.display(tcminferVisualization.displayDisNameToTCM.prev.word,
 						tcminferVisualization.displayDisNameToTCM.prev.prev);

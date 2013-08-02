@@ -150,6 +150,36 @@ public class BioInferServiceImpl implements BioInferService{
         }
         return null;
     }
+    
+    @Override
+    public BioInferSearchData getDisInference(final String disName, final Integer start, final Integer offset){
+
+        LOGGER.debug("get the bio inference result");
+        try {
+            final BioInferSearchData bioSearchData = new BioInferSearchData();
+//
+//            if (!searchTcm(geneName)) {
+//                bioSearchData.setFuzzymatchTCM(fuzzyMatchTcm(geneName));
+//                bioSearchData.setStatus(false);
+//                bioSearchData.setBioInferData(null);
+//                return bioSearchData;
+//            }
+
+            String dis = TCMGeneDITID + "disease/" + disName;
+            final ArrayList<BioInferData> bioInferData = bioInferDao.getDisInference(dis, start, offset);
+            LOGGER.debug("controller: {}", bioInferData);
+            bioSearchData.setStatus(true);
+            bioSearchData.setBioInferData(bioInferData);
+            bioSearchData.setFuzzymatchTCM(null);
+            bioSearchData.setTotalNum(bioInferDao.getDisInferCount(dis));
+            return bioSearchData;
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     @Override
     public ArrayList<TcmInferData> getAndCacheTcmInference(final String tcmName){
         return null;
