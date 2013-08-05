@@ -35,9 +35,19 @@
 				<li><a href="../ontologysearch/index.html">TCM Ontology</a></li>
 				<li><a href="../termsearch/index.html">Term Search</a></li>
 				<li><a href="../mappingsearch/index.html">Data Sets</a></li>
-				<li><a href="../tcminference/index.html">Bio for TCM</a></li>
+				<li class="dropdown"><a id="drop1" href="#" role="button"
+					class="dropdown-toggle" data-toggle="dropdown">Inference <b
+						class="caret"></b></a>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+						<li role="presentation"><a role="menuitem" tabindex="-1"
+							href="../tcminference/index.html">Bio for TCM</a></li>
+						<li role="presentation"><a role="menuitem" tabindex="-1"
+							href="../bioinference/index.html">TCM for Bio</a></li>
+					</ul>
+				</li>
+				<!-- <li><a href="../tcminference/index.html">Bio for TCM</a></li>
 				<li class="active"><a href="../bioinference/index.html">TCM
-						for Bio</a></li>
+						for Bio</a></li> -->
 				<li><a href="../publication/index.html">Publication</a></li>
 				<li><a href="../literature/index.html">Literature</a></li>
 				<li><a href="../about/index.html">About</a></li>
@@ -62,26 +72,27 @@
 				<label class="control-label">Bio</label>
 				<div class="controls">
 					<input type="text" id="bio-keyword" class="span5"
-						placeholder="Succinic acid, Glibenclamide..."/>
+						placeholder="Succinic acid, Glibenclamide..." />
 					<button class="btn" id="bio-search">Search</button>
 					<span class="help-inline" id="total-or-fuzzytip"> </span>
 				</div>
 			</div>
 			<div class="control-group">
 				<div class="controls">
-					<label class="radio inline"> <input type="radio" name="optionsRadios" id="DrugNameCheckbox" value="option1" checked>
+					<label class="radio inline"> <input type="radio"
+						name="optionsRadios" id="DrugNameCheckbox" value="option1" checked>
 						Drug name
-					</label>
-					<label class="radio inline"> <input type="radio" name="optionsRadios" id="GeneNameCheckbox" value="option2">
+					</label> <label class="radio inline"> <input type="radio"
+						name="optionsRadios" id="GeneNameCheckbox" value="option2">
 						Gene name
-					</label>
-					<label class="radio inline"> <input type="radio" name="optionsRadios" id="PACheckbox" value="option2">
+					</label> <label class="radio inline"> <input type="radio"
+						name="optionsRadios" id="PACheckbox" value="option2">
 						Protein Accession
-					</label>
-					<label class="radio inline"> <input type="radio" name="optionsRadios" id="GOIDCheckbox" value="option2">
+					</label> <label class="radio inline"> <input type="radio"
+						name="optionsRadios" id="GOIDCheckbox" value="option2">
 						GOID
-					</label>
-					<label class="radio inline"> <input type="radio" name="optionsRadios" id="DisCheckbox" value="option2">
+					</label> <label class="radio inline"> <input type="radio"
+						name="optionsRadios" id="DisCheckbox" value="option2">
 						Disease
 					</label>
 				</div>
@@ -92,8 +103,8 @@
 	</div>
 
 
-
-	<div class="well offset1 span11" style="min-height: 500px">
+	<div class="container">
+	<div class="well" style="min-height: 500px">
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#tab1" data-toggle="tab">List</a></li>
 			<li><a href="#tab2" data-toggle="tab">Detail List</a></li>
@@ -103,7 +114,7 @@
 			<div class="tab-pane active" id="tab1">
 				<table class="table table-striped">
 					<thead id="tb1-head">
-						
+
 					</thead>
 					<tbody id="tab1-table">
 						<tr class="hide" id="tab1-table-sample-row">
@@ -122,7 +133,7 @@
 			<div class="tab-pane" id="tab2">
 				<table class="table table-striped">
 					<thead id="tb2-head">
-						
+
 					</thead>
 					<tbody id="tab2-table">
 						<tr class="hide" id="tab2-table-sample-row">
@@ -138,22 +149,23 @@
 				<div class="pagination"></div>
 			</div>
 			<div class="tab-pane" id="tab3">
-					<span class="status"></span>
-					<div id="visual-div" style="height:800px"></div>
-					<div class="row">
-						<div class="span2">
-							<button class="btn" id="vback">BACK</button>
-						</div>
-						<div class="span3 offset4 input-prepend">
-							<span class="add-on">SELECTED NODE:</span>
-							<input class="span2" id="vselectnode" type="text" id="">
-						</div>
-						<div class="span2">
-							<button class="btn" id="vgo">GO</button>
-						</div>
+				<span class="status"></span>
+				<div id="visual-div" style="height: 800px"></div>
+				<div class="row">
+					<div class="span2">
+						<button class="btn" id="vback">BACK</button>
 					</div>
+					<div class="span3 offset4 input-prepend">
+						<span class="add-on">SELECTED NODE:</span> <input class="span2"
+							id="vselectnode" type="text" id="">
+					</div>
+					<div class="span2">
+						<button class="btn" id="vgo">GO</button>
+					</div>
+				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </body>
 </html>
