@@ -54,14 +54,14 @@ public class TcmInferServiceImpl implements TcmInferService{
                 return tcmSearchData;
             }
 
-            String tcm = tcmName.substring(0, 1).toUpperCase() + tcmName.substring(1).toLowerCase();
-            tcm = tcm.replace(" ", "_");
-            tcm = TCMGeneDITID + "medicine/" + tcm;
-            final ArrayList<TcmInferData> tcmInferData = tcmInferDao.getTcmInference(tcm, start, offset);
+//            String tcm = tcmName.substring(0, 1).toUpperCase() + tcmName.substring(1).toLowerCase();
+//            tcm = tcm.replace(" ", "_");
+//            String tcm = TCMGeneDITID + "medicine/" + tcmName;
+            final ArrayList<TcmInferData> tcmInferData = tcmInferDao.getTcmInference(tcmName, start, offset);
             tcmSearchData.setStatus(true);
             tcmSearchData.setTcmInferData(tcmInferData);
             tcmSearchData.setFuzzymatchTCM(null);
-            tcmSearchData.setTotalNum(tcmInferDao.getTcmInferCount(tcm));
+            tcmSearchData.setTotalNum(tcmInferDao.getTcmInferCount(tcmName));
             return tcmSearchData;
         } catch (final Exception e) {
             // TODO Auto-generated catch block

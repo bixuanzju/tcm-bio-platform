@@ -10,6 +10,7 @@ import static com.ccnt.tcmbio.data.GraphNames.Diseasome;
 import static com.ccnt.tcmbio.data.GraphNames.DrugBank;
 import static com.ccnt.tcmbio.data.GraphNames.TCMGeneDIT;
 import static com.ccnt.tcmbio.data.GraphNames.Tcm_Diseasesome_Mapping;
+import static com.ccnt.tcmbio.data.Namespaces.TCMGeneDITID;
 import static com.ccnt.tcmbio.data.PredictNames.Diseasesome_PossibleDrug;
 import static com.ccnt.tcmbio.data.PredictNames.Drugbank_SwissprotId;
 import static com.ccnt.tcmbio.data.PredictNames.OWL_SameAs;
@@ -17,270 +18,360 @@ import static com.ccnt.tcmbio.data.PredictNames.TCMGeneDIT_Treatment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-
 import com.ccnt.tcmbio.dao.TcmInferDao;
 import com.ccnt.tcmbio.data.TcmInferData;
 
-public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao{
+public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao {
 
-    private static final Logger LOGGER = LogManager.getLogger(TcmInferDaoImpl.class.getName());
+	private static final Logger LOGGER = LogManager
+			.getLogger(TcmInferDaoImpl.class.getName());
 
-    @Override
-    public ArrayList<TcmInferData> getTcmInference(final String tcm, final Integer start, final Integer offset){
+	@Override
+	public ArrayList<TcmInferData> getTcmInference(final String tcm,
+			final Integer start, final Integer offset) {
 
-        final String sparql = "sparql select * where {"
-                + "graph<http://localhost:8890/TCMGeneDIT> {<" + tcm + "> TCMGeneDIT:treatment ?diseaseName} . "
-                + "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
-                + "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
-                + "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
-                + "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
-                + "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName} . "
-                + "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}} "
-                + "limit(" + offset + ") offset(" + start + ")";
+		String sparql0 = "sparql select distinct ?tcmName where {graph<"
+				+ TCMGeneDIT + "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
+				+ TCMGeneDITID + "medicine/.*(";
 
-        LOGGER.debug("get tcm inference result - query virtuoso: {}", sparql);
+		if (tcm.contains(" ")) {
+			final String[] kws = tcm.split(" ");
+			for (final String kw : kws) {
+				sparql0 += kw;
+				if (kw != kws[kws.length - 1]) {
+					sparql0 += "|";
+				}
+			}
+		}
+		else {
+			sparql0 += tcm;
+		}
+		sparql0 += ").*\", \"i\")}}";
 
-        try {
-            final ArrayList<TcmInferData> tcmInferDatas = new ArrayList<TcmInferData>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+		List<Map<String, Object>> rows0 = getJdbcTemplate().queryForList(sparql0);
+		final ArrayList<TcmInferData> tcmInferDatas = new ArrayList<TcmInferData>();
 
-            for (final Map<String, Object> map : rows) {
-                final TcmInferData tcmInferData = new TcmInferData();
-                tcmInferData.setTcmName(tcm);
-                tcmInferData.setDiseaseName(map.get("diseaseName").toString());
-                tcmInferData.setDiseaseID(map.get("diseaseID").toString());
-                tcmInferData.setDrugID(map.get("drugID").toString());
-                tcmInferData.setDrugName(map.get("drugName").toString());
-                tcmInferData.setTargetID(map.get("targetID").toString());
-                tcmInferData.setTargetName(map.get("targetName").toString());
-                tcmInferData.setProteinAcce(map.get("proteinAcce").toString());
-                tcmInferData.setGeneName(map.get("geneName").toString());
-                tcmInferData.setGeneGOID(map.get("GOID").toString());
-                tcmInferData.setGeneProduct(map.get("genePro").toString());
-                tcmInferDatas.add(tcmInferData);
-            }
-            return tcmInferDatas;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		for (final Map<String, Object> row0 : rows0) {
 
-        return null;
-    }
+			final String tcmName = row0.get("tcmName").toString();
 
-    @Override
-    public Integer getTcmInferCount(final String tcm){
+			final String sparql = "sparql select * where {"
+					+ "graph<http://localhost:8890/TCMGeneDIT> {<"
+					+ tcmName
+					+ "> TCMGeneDIT:treatment ?diseaseName} . "
+					+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+					+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+					+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+					+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+					+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+					+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+					+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+					+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
+					+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName} . "
+					+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}} "
+					+ "limit(" + offset + ") offset(" + start + ")";
 
-        final String sparql = "sparql select count(*) as ?count where {"
-                + "graph<http://localhost:8890/TCMGeneDIT> {<" + tcm + "> TCMGeneDIT:treatment ?diseaseName} . "
-                + "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
-                + "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
-                + "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
-                + "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}}";
+			LOGGER.debug("get tcm inference result - query virtuoso: {}", sparql);
 
-        LOGGER.debug("get tcm inference result - query virtuoso: {}", sparql);
+			try {
 
-        try {
-            return getJdbcTemplate().queryForInt(sparql);
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+				final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+						sparql);
 
-        return 0;
-    }
+				for (final Map<String, Object> map : rows) {
+					final TcmInferData tcmInferData = new TcmInferData();
+					tcmInferData.setTcmName(tcmName);
+					tcmInferData.setDiseaseName(map.get("diseaseName").toString());
+					tcmInferData.setDiseaseID(map.get("diseaseID").toString());
+					tcmInferData.setDrugID(map.get("drugID").toString());
+					tcmInferData.setDrugName(map.get("drugName").toString());
+					tcmInferData.setTargetID(map.get("targetID").toString());
+					tcmInferData.setTargetName(map.get("targetName").toString());
+					tcmInferData.setProteinAcce(map.get("proteinAcce").toString());
+					tcmInferData.setGeneName(map.get("geneName").toString());
+					tcmInferData.setGeneGOID(map.get("GOID").toString());
+					tcmInferData.setGeneProduct(map.get("genePro").toString());
+					tcmInferDatas.add(tcmInferData);
+				}
 
-    @Override
-    public ArrayList<String> getDiseaseName(final String tcm, final Integer start, final Integer offset){
+			}
+			catch (final DataAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return tcmInferDatas;
+		// return null;
+	}
 
-        final String sparql = "sparql select * from <" + TCMGeneDIT + "> where {"
-                + tcm + " " + TCMGeneDIT_Treatment + " ?diseaseName}";
+	@Override
+	public Integer getTcmInferCount(final String tcm) {
 
-        LOGGER.debug("getDiseaseName - query virtuoso: {}", sparql);
+		String sparql0 = "sparql select distinct ?tcmName where {graph<"
+				+ TCMGeneDIT + "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
+				+ TCMGeneDITID + "medicine/.*(";
 
-        try {
-            final ArrayList<String> diseaseNames = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+		if (tcm.contains(" ")) {
+			final String[] kws = tcm.split(" ");
+			for (final String kw : kws) {
+				sparql0 += kw;
+				if (kw != kws[kws.length - 1]) {
+					sparql0 += "|";
+				}
+			}
+		}
+		else {
+			sparql0 += tcm;
+		}
+		sparql0 += ").*\", \"i\")}}";
 
-            for(final Map<String, Object> row : rows){
-                diseaseNames.add(row.get("diseaseName").toString());
-            }
+		List<Map<String, Object>> rows0 = getJdbcTemplate().queryForList(sparql0);
+		int count = 0;
 
-            return diseaseNames;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		for (final Map<String, Object> row0 : rows0) {
 
-        return null;
-    }
+			final String tcmName = row0.get("tcmName").toString();
 
-    @Override
-    public ArrayList<String> getDiseaseID(final String diseaseName, final Integer start, final Integer offset){
+			final String sparql = "sparql select count(*) as ?count where {"
+					+ "graph<http://localhost:8890/TCMGeneDIT> {<"
+					+ tcmName
+					+ "> TCMGeneDIT:treatment ?diseaseName} . "
+					+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+					+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+					+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+					+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+					+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+					+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}}";
 
-        final String sparql = "sparql select * from <" + Tcm_Diseasesome_Mapping + "> where {"
-                + diseaseName + " " + OWL_SameAs + " ?diseaseID}";
+			LOGGER.debug("get tcm inference result - query virtuoso: {}", sparql);
 
-        LOGGER.debug("getDiseaseID - query virtuoso: {}", sparql);
+			try {
+				count += getJdbcTemplate().queryForInt(sparql);
+			}
+			catch (final DataAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}
 
-        try {
-            final ArrayList<String> diseaseIDs = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+	@Override
+	public ArrayList<String> getDiseaseName(final String tcm,
+			final Integer start, final Integer offset) {
 
-            for(final Map<String, Object> row : rows){
-                diseaseIDs.add(row.get("diseaseID").toString());
-            }
+		final String sparql = "sparql select * from <" + TCMGeneDIT + "> where {"
+				+ tcm + " " + TCMGeneDIT_Treatment + " ?diseaseName}";
 
-            return diseaseIDs;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		LOGGER.debug("getDiseaseName - query virtuoso: {}", sparql);
 
-        return null;
-    }
+		try {
+			final ArrayList<String> diseaseNames = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
 
-    @Override
-    public ArrayList<String> getDrugName(final String diseaseID, final Integer start, final Integer offset){
+			for (final Map<String, Object> row : rows) {
+				diseaseNames.add(row.get("diseaseName").toString());
+			}
 
-        final String sparql = "sparql select * where {"
-                + "graph<" + Diseasome + "> {"+ diseaseID + " " + Diseasesome_PossibleDrug + " ?drugID} . "
-                + "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName}}";
+			return diseaseNames;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        LOGGER.debug("getDrugID - query virtuoso: {}", sparql);
+		return null;
+	}
 
-        try {
-            final ArrayList<String> drugIDs = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+	@Override
+	public ArrayList<String> getDiseaseID(final String diseaseName,
+			final Integer start, final Integer offset) {
 
-            for(final Map<String, Object> row : rows){
-                drugIDs.add(row.get("drugName").toString());
-            }
+		final String sparql = "sparql select * from <" + Tcm_Diseasesome_Mapping
+				+ "> where {" + diseaseName + " " + OWL_SameAs + " ?diseaseID}";
 
-            return drugIDs;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		LOGGER.debug("getDiseaseID - query virtuoso: {}", sparql);
 
-        return null;
-    }
+		try {
+			final ArrayList<String> diseaseIDs = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
 
-    @Override
-    public ArrayList<String> getTargetID(final String drugName, final Integer start, final Integer offset){
+			for (final Map<String, Object> row : rows) {
+				diseaseIDs.add(row.get("diseaseID").toString());
+			}
 
-        final String sparql = "sparql select * where {"
-        				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label \"" + drugName + "\"} . "
-        				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID}}";
-        				
-        LOGGER.debug("getTargetID - query virtuoso: {}", sparql);
+			return diseaseIDs;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        try {
-            final ArrayList<String> targetIDs = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+		return null;
+	}
 
-            for(final Map<String, Object> row : rows){
-                targetIDs.add(row.get("targetID").toString());
-            }
+	@Override
+	public ArrayList<String> getDrugName(final String diseaseID,
+			final Integer start, final Integer offset) {
 
-            return targetIDs;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		final String sparql = "sparql select * where {"
+				+ "graph<"
+				+ Diseasome
+				+ "> {"
+				+ diseaseID
+				+ " "
+				+ Diseasesome_PossibleDrug
+				+ " ?drugID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName}}";
 
-        return null;
-    }
+		LOGGER.debug("getDrugID - query virtuoso: {}", sparql);
 
-    @Override
-    public ArrayList<String> getProtein(final String targetID, final Integer start, final Integer offset){
+		try {
+			final ArrayList<String> drugIDs = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
 
-        final String sparql = "sparql select * from <" + DrugBank + "> where {"
-                + targetID + " " + Drugbank_SwissprotId + " ?proteinAcce}";
+			for (final Map<String, Object> row : rows) {
+				drugIDs.add(row.get("drugName").toString());
+			}
 
-        LOGGER.debug("getProtein - query virtuoso: {}", sparql);
+			return drugIDs;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        try {
-            final ArrayList<String> proteinAcces = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+		return null;
+	}
 
-            for(final Map<String, Object> row : rows){
-                proteinAcces.add(row.get("proteinAcce").toString());
-            }
+	@Override
+	public ArrayList<String> getTargetID(final String drugName,
+			final Integer start, final Integer offset) {
 
-            return proteinAcces;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		final String sparql = "sparql select * where {"
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label \""
+				+ drugName
+				+ "\"} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID}}";
 
-        return null;
-    }
+		LOGGER.debug("getTargetID - query virtuoso: {}", sparql);
 
-    @Override
-    public ArrayList<String> getGeneID(final String protein, final Integer start, final Integer offset){
+		try {
+			final ArrayList<String> targetIDs = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
 
-        final String sparql = "sparql select * where {"
-        				+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {" + protein + " uniprotGO:classifiedWith ?geneID} . "
-        				+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName}}";
+			for (final Map<String, Object> row : rows) {
+				targetIDs.add(row.get("targetID").toString());
+			}
 
-        LOGGER.debug("getGeneID - query virtuoso: {}", sparql);
+			return targetIDs;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        try {
-            final ArrayList<String> geneIDs = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+		return null;
+	}
 
-            for(final Map<String, Object> row : rows){
-                geneIDs.add(row.get("geneName").toString());
-            }
+	@Override
+	public ArrayList<String> getProtein(final String targetID,
+			final Integer start, final Integer offset) {
 
-            return geneIDs;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		final String sparql = "sparql select * from <" + DrugBank + "> where {"
+				+ targetID + " " + Drugbank_SwissprotId + " ?proteinAcce}";
 
-        return null;
-    }
+		LOGGER.debug("getProtein - query virtuoso: {}", sparql);
 
-    @Override
-    public ArrayList<String> getGeneProduct(final String geneName, final Integer start, final Integer offset){
+		try {
+			final ArrayList<String> proteinAcces = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
 
-        final String sparql = "sparql select * where {"
-        		 		+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> " + geneName + "} . "
-        		 		+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
-        		 		+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
-        		 		+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?geneProduct}} ";
-        		 		
-        		 		
-        LOGGER.debug("getGeneProduct - query virtuoso: {}", sparql);
+			for (final Map<String, Object> row : rows) {
+				proteinAcces.add(row.get("proteinAcce").toString());
+			}
 
-        try {
-            final ArrayList<String> geneProducts = new ArrayList<String>();
-            final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sparql);
+			return proteinAcces;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-            for(final Map<String, Object> row : rows){
-                geneProducts.add(row.get("geneProduct").toString());
-            }
+		return null;
+	}
 
-            return geneProducts;
-        } catch (final DataAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+	@Override
+	public ArrayList<String> getGeneID(final String protein, final Integer start,
+			final Integer offset) {
 
-        return null;
-    }
+		final String sparql = "sparql select * where {"
+				+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {"
+				+ protein
+				+ " uniprotGO:classifiedWith ?geneID} . "
+				+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName}}";
+
+		LOGGER.debug("getGeneID - query virtuoso: {}", sparql);
+
+		try {
+			final ArrayList<String> geneIDs = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
+
+			for (final Map<String, Object> row : rows) {
+				geneIDs.add(row.get("geneName").toString());
+			}
+
+			return geneIDs;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getGeneProduct(final String geneName,
+			final Integer start, final Integer offset) {
+
+		final String sparql = "sparql select * where {"
+				+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> "
+				+ geneName
+				+ "} . "
+				+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
+				+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+				+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?geneProduct}} ";
+
+		LOGGER.debug("getGeneProduct - query virtuoso: {}", sparql);
+
+		try {
+			final ArrayList<String> geneProducts = new ArrayList<String>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
+
+			for (final Map<String, Object> row : rows) {
+				geneProducts.add(row.get("geneProduct").toString());
+			}
+
+			return geneProducts;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
 }
