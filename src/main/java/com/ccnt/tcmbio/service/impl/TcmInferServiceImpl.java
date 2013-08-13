@@ -61,7 +61,7 @@ public class TcmInferServiceImpl implements TcmInferService{
             tcmSearchData.setStatus(true);
             tcmSearchData.setTcmInferData(tcmInferData);
             tcmSearchData.setFuzzymatchTCM(null);
-            tcmSearchData.setTotalNum(tcmInferDao.getTcmInferCount(tcmName));
+            tcmSearchData.setTotalNum(tcmInferDao.getTcmInferCount(tcmSearchData.getTcmInferData().get(0).getTcmName()));
             return tcmSearchData;
         } catch (final Exception e) {
             // TODO Auto-generated catch block

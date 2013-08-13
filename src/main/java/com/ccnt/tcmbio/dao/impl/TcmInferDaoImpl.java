@@ -16,6 +16,7 @@ import static com.ccnt.tcmbio.data.PredictNames.Drugbank_SwissprotId;
 import static com.ccnt.tcmbio.data.PredictNames.OWL_SameAs;
 import static com.ccnt.tcmbio.data.PredictNames.TCMGeneDIT_Treatment;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -34,25 +35,55 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao {
 	public ArrayList<TcmInferData> getTcmInference(final String tcm,
 			final Integer start, final Integer offset) {
 
-		String sparql0 = "sparql select distinct ?tcmName where {graph<"
-				+ TCMGeneDIT + "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
-				+ TCMGeneDITID + "medicine/.*(";
+		String sparql0 = "sparql select * where {graph<" + TCMGeneDIT + "> " + "{<"
+				+ TCMGeneDITID + "medicine/" + tcm.replace(" ", "_") + "> ?p ?o }}";
 
-		if (tcm.contains(" ")) {
-			final String[] kws = tcm.split(" ");
-			for (final String kw : kws) {
-				sparql0 += kw;
-				if (kw != kws[kws.length - 1]) {
-					sparql0 += "|";
+		LOGGER.debug("get tcm name1 - query virtuoso: {}", sparql0);
+
+		List<Map<String, Object>> rows0 = getJdbcTemplate().queryForList(sparql0);
+
+		if (rows0.size() == 0) {
+
+			sparql0 = "sparql select distinct ?tcmName where {graph<" + TCMGeneDIT
+					+ "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
+					+ TCMGeneDITID + "medicine/.*" + tcm.replace(" ", "_")
+					+ ".*\", \"i\")}} ";
+
+			LOGGER.debug("get tcm name2 - query virtuoso: {}", sparql0);
+			rows0 = getJdbcTemplate().queryForList(sparql0);
+
+			if (rows0.size() == 0) {
+				sparql0 = "sparql select distinct ?tcmName where {graph<" + TCMGeneDIT
+						+ "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
+						+ TCMGeneDITID + "medicine/.*(";
+
+				if (tcm.contains(" ")) {
+					final String[] kws = tcm.split(" ");
+					for (final String kw : kws) {
+						sparql0 += kw;
+						if (kw != kws[kws.length - 1]) {
+							sparql0 += "|";
+						}
+					}
 				}
+				else {
+					sparql0 += tcm;
+				}
+				sparql0 += ").*\", \"i\")}}";
+
+				LOGGER.debug("get tcm name3 - query virtuoso: {}", sparql0);
+
+				rows0 = getJdbcTemplate().queryForList(sparql0);
+
 			}
 		}
 		else {
-			sparql0 += tcm;
+			rows0.clear();
+			final Map<String, Object> map = new HashMap<String, Object>();
+			map.put("tcmName", TCMGeneDITID + "medicine/" + tcm.replace(" ", "_"));
+			rows0.add(map);
 		}
-		sparql0 += ").*\", \"i\")}}";
 
-		List<Map<String, Object>> rows0 = getJdbcTemplate().queryForList(sparql0);
 		final ArrayList<TcmInferData> tcmInferDatas = new ArrayList<TcmInferData>();
 
 		for (final Map<String, Object> row0 : rows0) {
@@ -111,53 +142,27 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao {
 	@Override
 	public Integer getTcmInferCount(final String tcm) {
 
-		String sparql0 = "sparql select distinct ?tcmName where {graph<"
-				+ TCMGeneDIT + "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
-				+ TCMGeneDITID + "medicine/.*(";
+		final String sparql = "sparql select count(*) as ?count where {"
+				+ "graph<http://localhost:8890/TCMGeneDIT> {<"
+				+ tcm
+				+ "> TCMGeneDIT:treatment ?diseaseName} . "
+				+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+				+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+				+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+				+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}}";
 
-		if (tcm.contains(" ")) {
-			final String[] kws = tcm.split(" ");
-			for (final String kw : kws) {
-				sparql0 += kw;
-				if (kw != kws[kws.length - 1]) {
-					sparql0 += "|";
-				}
-			}
+		LOGGER.debug("get tcm inference count - query virtuoso: {}", sparql);
+
+		try {
+			return getJdbcTemplate().queryForInt(sparql);
 		}
-		else {
-			sparql0 += tcm;
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sparql0 += ").*\", \"i\")}}";
-
-		List<Map<String, Object>> rows0 = getJdbcTemplate().queryForList(sparql0);
-		int count = 0;
-
-		for (final Map<String, Object> row0 : rows0) {
-
-			final String tcmName = row0.get("tcmName").toString();
-
-			final String sparql = "sparql select count(*) as ?count where {"
-					+ "graph<http://localhost:8890/TCMGeneDIT> {<"
-					+ tcmName
-					+ "> TCMGeneDIT:treatment ?diseaseName} . "
-					+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
-					+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
-					+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
-					+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
-					+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
-					+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}}";
-
-			LOGGER.debug("get tcm inference result - query virtuoso: {}", sparql);
-
-			try {
-				count += getJdbcTemplate().queryForInt(sparql);
-			}
-			catch (final DataAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return count;
+		return 0;
 	}
 
 	@Override
