@@ -45,37 +45,37 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao {
 		if (rows0.size() == 0) {
 
 			sparql0 = "sparql select distinct ?tcmName where {graph<" + TCMGeneDIT
-					+ "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
-					+ TCMGeneDITID + "medicine/.*" + tcm.replace(" ", "_")
-					+ ".*\", \"i\")}} ";
+					+ "> " + "{?tcmName ?p ?o " + ". filter (?tcmName LIKE \"@"
+					+ TCMGeneDITID + "medicine/" + tcm.replace(" ", "_")
+					+ "\")}} ";
 
 			LOGGER.debug("get tcm name2 - query virtuoso: {}", sparql0);
 			rows0 = getJdbcTemplate().queryForList(sparql0);
-
-			if (rows0.size() == 0) {
-				sparql0 = "sparql select distinct ?tcmName where {graph<" + TCMGeneDIT
-						+ "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
-						+ TCMGeneDITID + "medicine/.*(";
-
-				if (tcm.contains(" ")) {
-					final String[] kws = tcm.split(" ");
-					for (final String kw : kws) {
-						sparql0 += kw;
-						if (kw != kws[kws.length - 1]) {
-							sparql0 += "|";
-						}
-					}
-				}
-				else {
-					sparql0 += tcm;
-				}
-				sparql0 += ").*\", \"i\")}}";
-
-				LOGGER.debug("get tcm name3 - query virtuoso: {}", sparql0);
-
-				rows0 = getJdbcTemplate().queryForList(sparql0);
-
-			}
+//
+//			if (rows0.size() == 0) {
+//				sparql0 = "sparql select distinct ?tcmName where {graph<" + TCMGeneDIT
+//						+ "> " + "{?tcmName ?p ?o " + "filter regex(?tcmName, \""
+//						+ TCMGeneDITID + "medicine/.*(";
+//
+//				if (tcm.contains(" ")) {
+//					final String[] kws = tcm.split(" ");
+//					for (final String kw : kws) {
+//						sparql0 += kw;
+//						if (kw != kws[kws.length - 1]) {
+//							sparql0 += "|";
+//						}
+//					}
+//				}
+//				else {
+//					sparql0 += tcm;
+//				}
+//				sparql0 += ").*\", \"i\")}}";
+//
+//				LOGGER.debug("get tcm name3 - query virtuoso: {}", sparql0);
+//
+//				rows0 = getJdbcTemplate().queryForList(sparql0);
+//
+//			}
 		}
 		else {
 			rows0.clear();

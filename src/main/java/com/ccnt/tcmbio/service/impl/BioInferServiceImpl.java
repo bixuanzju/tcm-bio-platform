@@ -58,7 +58,7 @@ public class BioInferServiceImpl implements BioInferService{
             bioSearchData.setStatus(true);
             bioSearchData.setBioInferData(bioInferData);
             bioSearchData.setFuzzymatchTCM(null);
-            bioSearchData.setTotalNum(bioInferDao.getDrugInferCount(bioName));
+            bioSearchData.setTotalNum(bioInferDao.getDrugInferCount(bioSearchData.getbioInferData().get(0).getDrugName()));
             return bioSearchData;
         } catch (final Exception e) {
             // TODO Auto-generated catch block
@@ -165,13 +165,13 @@ public class BioInferServiceImpl implements BioInferService{
 //                return bioSearchData;
 //            }
 
-            String dis = TCMGeneDITID + "disease/" + disName;
+            String dis = TCMGeneDITID + "disease/" + disName.replace(" ", "_");
             final ArrayList<BioInferData> bioInferData = bioInferDao.getDisInference(dis, start, offset);
             LOGGER.debug("controller: {}", bioInferData);
             bioSearchData.setStatus(true);
             bioSearchData.setBioInferData(bioInferData);
             bioSearchData.setFuzzymatchTCM(null);
-            bioSearchData.setTotalNum(bioInferDao.getDisInferCount(dis));
+            bioSearchData.setTotalNum(bioInferDao.getDisInferCount(bioSearchData.getbioInferData().get(0).getDiseaseName()));
             return bioSearchData;
         } catch (final Exception e) {
             // TODO Auto-generated catch block
@@ -215,7 +215,7 @@ public class BioInferServiceImpl implements BioInferService{
     public Graphml getDisName2TCMName(final String disname, final Integer start, final Integer offset){
       try {
 
-          final String url = TCMGeneDITID + "disease/" + disname;
+          final String url = TCMGeneDITID + "disease/" + disname.replace(" ", "_");
           final ArrayList<String> leaves = bioInferDao.getDisName2TCMName("<" + url + ">", start, offset);
           final Graph graph = createGraphService.createGraph(url, leaves, "node#0", false, "node#1", "TCMName", "edge#0", "G#0", "directed", "3", "4");
           return new Graphml(graph);
