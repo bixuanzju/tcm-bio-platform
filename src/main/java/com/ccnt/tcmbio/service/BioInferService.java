@@ -22,7 +22,7 @@ public interface BioInferService {
     public BioInferSearchData getGOIDInference(String GOID, Integer start, Integer offset);
     
     public BioInferSearchData getDisInference(String disName, Integer start, Integer offset);
-
+    
     public ArrayList<TcmInferData> getAndCacheTcmInference(String tcmName);
 
     public boolean searchTcm(String tcmName);

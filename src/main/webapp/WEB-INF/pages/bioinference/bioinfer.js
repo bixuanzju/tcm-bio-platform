@@ -23,6 +23,7 @@ $(function(){
         }
     });
 
+
 });
 
 // ================= UTILITY FUNCTIONS =========================================
@@ -95,12 +96,13 @@ var bioinfer = {
                 bioinfer.getDisInfer(url);
                 tcminferVisualization.displayDisNameToTCM.display(keyword, null);
             }
+            
 
             //                  tcminferVisualization.displaytcm.display(keyword);
         }
 
     },
-
+    
     getDrugInfer : function(url){
         commonjs.ajax("GET", url, "", "", this.showDrug, commonjs.showErrorTip);
         $('.spin-progress').spin(this.spinopts);
@@ -167,7 +169,7 @@ var bioinfer = {
             // TODO
         } else {
             $('#tb1-head').html("<tr><th>Gene Name</th><th>Protein Accession</th><th>Target Name</th>" +
-                                "<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
+                                "<th>Drug Name</th><th>Disease Name</th><th><a href='#myModal' class='demo' data-toggle='modal'>TCM Name</a></th></tr>");
             $('#tb2-head').html("<tr><th>Gene Name</th><th>Protein Accession</th><th>Target Name</th>" +
                                 "<th>Drug Name</th><th>Disease Name</th><th>TCM Name</th></tr>");
             bioinfer.disDetailTab(data);
@@ -222,8 +224,16 @@ var bioinfer = {
             var htmlRowTab1 = bioinfer.toHtmlRowTab1(data.bioInferData[i], bioinfer.getType());
             $('#tab2-table').append(htmlRowTab2);
             $('#tab1-table').append(htmlRowTab1);
-
         }
+                
+        var html = ""
+        for(var i=0; i < data.bioDistData.length; i++) {
+        	html += "<p>" + bioinfer.splitResource(data.bioDistData[i].tcmName) + "</p>"
+        }
+        
+        $(".modal-body").html(html);
+        $("#myModalLabel").html("TCM Name: " + data.bioDistData.length);
+        
         $('#total-or-fuzzytip').html("About " + data.totalNum + " results.");
         bioinfer.totalNum = data.totalNum;
         $('.pagination').pagination({

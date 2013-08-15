@@ -83,8 +83,10 @@ public class BioInferServiceImpl implements BioInferService{
 
             String geneName = GeneNamefix + gene;
             final ArrayList<BioInferData> bioInferData = bioInferDao.getGeneNameInference(geneName, start, offset);
+            final ArrayList<BioInferData> bioDistData = bioInferDao.getDistData(geneName);
             bioSearchData.setStatus(true);
             bioSearchData.setBioInferData(bioInferData);
+            bioSearchData.setBioDistData(bioDistData);
             bioSearchData.setFuzzymatchTCM(null);
             bioSearchData.setTotalNum(bioInferDao.getGeneNameInferCount(geneName));
             return bioSearchData;

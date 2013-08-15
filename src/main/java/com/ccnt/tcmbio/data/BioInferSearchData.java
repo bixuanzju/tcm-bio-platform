@@ -13,6 +13,8 @@ public class BioInferSearchData {
     private boolean status;
 
     private ArrayList<BioInferData> bioInferData;
+    
+    private ArrayList<BioInferData> bioDistData;
 
     private ArrayList<String> fuzzymatchTCM;
 
@@ -33,6 +35,16 @@ public class BioInferSearchData {
     public void setBioInferData(final ArrayList<BioInferData> bioInferData) {
         this.bioInferData = bioInferData;
     }
+    
+    public ArrayList<BioInferData> getbioDistData() {
+      return bioDistData;
+    }
+
+    
+    public void setBioDistData(final ArrayList<BioInferData> bioDistData) {
+    	this.bioDistData = bioDistData;
+    }
+
 
     public ArrayList<String> getFuzzymatchTCM() {
         return fuzzymatchTCM;

@@ -16,6 +16,8 @@ public interface BioInferDao {
     public Integer getDrugInferCount(String bio);
     
     public ArrayList<BioInferData> getGeneNameInference(String drugName, Integer start, Integer offset);
+    
+    public ArrayList<BioInferData> getDistData(String geneName);
 
     public Integer getGeneNameInferCount(String drugName);
     
@@ -24,7 +26,7 @@ public interface BioInferDao {
     public Integer getPAInferCount(String PAName);
     
     public ArrayList<BioInferData> getGOIDInference(String GOID, Integer start, Integer offset);
-
+    
     public Integer getGOIDInferCount(String GOID);
     
     public ArrayList<BioInferData> getDisInference(String disName, Integer start, Integer offset);

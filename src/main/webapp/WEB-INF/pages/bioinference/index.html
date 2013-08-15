@@ -43,8 +43,7 @@
 							href="../tcminference/index.html">Bio for TCM</a></li>
 						<li role="presentation"><a role="menuitem" tabindex="-1"
 							href="../bioinference/index.html">TCM for Bio</a></li>
-					</ul>
-				</li>
+					</ul></li>
 				<!-- <li><a href="../tcminference/index.html">Bio for TCM</a></li>
 				<li class="active"><a href="../bioinference/index.html">TCM
 						for Bio</a></li> -->
@@ -104,68 +103,82 @@
 
 
 	<div class="container">
-	<div class="well hide" style="min-height: 500px" id="showcase">
-		<ul class="nav nav-tabs">
-			<li class="active"><a href="#tab1" data-toggle="tab">List</a></li>
-			<li><a href="#tab2" data-toggle="tab">Detail List</a></li>
-			<li><a href="#tab3" data-toggle="tab">Graph</a></li>
-		</ul>
-		<div class="tab-content">
-			<div class="tab-pane active" id="tab1">
-				<table class="table table-striped">
-					<thead id="tb1-head">
+		<div class="well hide" style="min-height: 500px" id="showcase">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab1" data-toggle="tab">List</a></li>
+				<li><a href="#tab2" data-toggle="tab">Detail List</a></li>
+				<li><a href="#tab3" data-toggle="tab">Graph</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab1">
+					<table class="table table-striped">
+						<thead id="tb1-head">
 
-					</thead>
-					<tbody id="tab1-table">
-						<tr class="hide" id="tab1-table-sample-row">
-							<td class="bio-1"></td>
-							<td class="bio-2"></td>
-							<td class="bio-3"></td>
-							<td class="bio-4"></td>
-							<td class="bio-5"></td>
-							<td class="bio-6"></td>
-						</tr>
-					</tbody>
-				</table>
-				<div class="pagination"></div>
-				<div class="spin-progress" style="height: 50px"></div>
-			</div>
-			<div class="tab-pane" id="tab2">
-				<table class="table table-striped">
-					<thead id="tb2-head">
+						</thead>
+						<tbody id="tab1-table">
+							<tr class="hide" id="tab1-table-sample-row">
+								<td class="bio-1"></td>
+								<td class="bio-2"></td>
+								<td class="bio-3"></td>
+								<td class="bio-4"></td>
+								<td class="bio-5"></td>
+								<td class="bio-6"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="pagination"></div>
+					<div class="spin-progress" style="height: 50px"></div>
+				</div>
+				<div class="tab-pane" id="tab2">
+					<table class="table table-striped">
+						<thead id="tb2-head">
 
-					</thead>
-					<tbody id="tab2-table">
-						<tr class="hide" id="tab2-table-sample-row">
-							<td class="bio-1"></td>
-							<td class="bio-2"></td>
-							<td class="bio-3"></td>
-							<td class="bio-4"></td>
-							<td class="bio-5"></td>
-							<td class="bio-6"></td>
-						</tr>
-					</tbody>
-				</table>
-				<div class="pagination"></div>
-			</div>
-			<div class="tab-pane" id="tab3">
-				<span class="status"></span>
-				<div id="visual-div" style="height: 800px"></div>
-				<div class="row">
-					<div class="span2">
-						<button class="btn" id="vback">BACK</button>
+						</thead>
+						<tbody id="tab2-table">
+							<tr class="hide" id="tab2-table-sample-row">
+								<td class="bio-1"></td>
+								<td class="bio-2"></td>
+								<td class="bio-3"></td>
+								<td class="bio-4"></td>
+								<td class="bio-5"></td>
+								<td class="bio-6"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="pagination"></div>
+				</div>
+				<div class="tab-pane" id="tab3">
+					<span class="status"></span>
+					<div id="visual-div" style="height: 800px"></div>
+					<div class="row">
+						<div class="span2">
+							<button class="btn" id="vback">BACK</button>
+						</div>
+						<div class="span3 offset4 input-prepend">
+							<span class="add-on">SELECTED NODE:</span> <input class="span2"
+								id="vselectnode" type="text" id="">
+						</div>
+						<div class="span2">
+							<button class="btn" id="vgo">GO</button>
+						</div>
 					</div>
-					<div class="span3 offset4 input-prepend">
-						<span class="add-on">SELECTED NODE:</span> <input class="span2"
-							id="vselectnode" type="text" id="">
+				</div>
+				<!-- Modal -->
+				<div id="myModal" class="modal hide fade" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×</button>
+						<h3 id="myModalLabel">Modal Header</h3>
 					</div>
-					<div class="span2">
-						<button class="btn" id="vgo">GO</button>
+					<div class="modal-body">
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 </body>
 </html>

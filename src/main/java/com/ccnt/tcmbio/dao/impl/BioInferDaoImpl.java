@@ -143,6 +143,49 @@ public class BioInferDaoImpl extends JdbcDaoSupport implements BioInferDao {
 	}
 
 	@Override
+	public ArrayList<BioInferData> getDistData(final String geneName) {
+
+		final String sparql = "sparql select distinct ?tcmName where {"
+				+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> <"
+				+ geneName
+				+ "> } . "
+				+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+				+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+				+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+				+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName}} ";
+
+		LOGGER.debug("get bio inference result - query virtuoso: {}", sparql);
+
+		try {
+			final ArrayList<BioInferData> bioInferDatas = new ArrayList<BioInferData>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
+
+			for (final Map<String, Object> map : rows) {
+				final BioInferData bioInferData = new BioInferData();
+				bioInferData.setTcmName(map.get("tcmName").toString());
+//				bioInferData.setDiseaseName(map.get("diseaseName").toString());
+//				bioInferData.setDrugName(map.get("drugName").toString());
+//				bioInferData.setProteinAcce(map.get("proteinAcce").toString());
+//				bioInferData.setTargetName(map.get("targetName").toString());
+//				bioInferData.setGeneName(geneName);
+				bioInferDatas.add(bioInferData);
+			}
+			return bioInferDatas;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	@Override
 	public ArrayList<BioInferData> getPAInference(final String PAName,
 			final Integer start, final Integer offset) {
 
