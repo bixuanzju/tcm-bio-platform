@@ -79,6 +79,15 @@ var tcminfer = {
                 $('#tab2-table').append(htmlRowTab2);
                 $('#tab1-table').append(htmlRowTab1);
             }
+            
+            var html = ""
+                for(var i=0; i < data.tcmDistData.length; i++) {
+                	html += "<p>" + tcminfer.splitResource(data.tcmDistData[i].geneName) + "</p>"
+                }
+                
+            $(".modal-body").html(html);
+            $("#myModalLabel").html("Gene Name: " + data.tcmDistData.length);
+                
             $('#total-or-fuzzytip').html("About " + data.totalNum + " results.");
             tcminfer.totalNum = data.totalNum;
             $('.pagination').pagination({

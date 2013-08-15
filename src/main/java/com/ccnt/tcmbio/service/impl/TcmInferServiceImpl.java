@@ -60,6 +60,8 @@ public class TcmInferServiceImpl implements TcmInferService{
             final ArrayList<TcmInferData> tcmInferData = tcmInferDao.getTcmInference(tcmName, start, offset);
             tcmSearchData.setStatus(true);
             tcmSearchData.setTcmInferData(tcmInferData);
+            final ArrayList<TcmInferData> tcmDistData = tcmInferDao.getDistData(tcmSearchData.getTcmInferData().get(0).getTcmName());
+            tcmSearchData.setTcmDistData(tcmDistData);
             tcmSearchData.setFuzzymatchTCM(null);
             tcmSearchData.setTotalNum(tcmInferDao.getTcmInferCount(tcmSearchData.getTcmInferData().get(0).getTcmName()));
             return tcmSearchData;

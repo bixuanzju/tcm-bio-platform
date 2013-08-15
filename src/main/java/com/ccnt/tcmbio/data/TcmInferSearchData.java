@@ -13,6 +13,8 @@ public class TcmInferSearchData {
     private boolean status;
 
     private ArrayList<TcmInferData> tcmInferData;
+    
+    private ArrayList<TcmInferData> tcmDistData;
 
     private ArrayList<String> fuzzymatchTCM;
 
@@ -33,6 +35,14 @@ public class TcmInferSearchData {
     public void setTcmInferData(final ArrayList<TcmInferData> tcmInferData) {
         this.tcmInferData = tcmInferData;
     }
+    
+    public ArrayList<TcmInferData> getTcmDistData() {
+      	return tcmDistData;
+    }
+
+    public void setTcmDistData(final ArrayList<TcmInferData> tcmDistData) {
+      	this.tcmDistData = tcmDistData;
+  	}
 
     public ArrayList<String> getFuzzymatchTCM() {
         return fuzzymatchTCM;

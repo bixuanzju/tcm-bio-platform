@@ -13,6 +13,8 @@ import com.ccnt.tcmbio.data.TcmInferData;
 public interface TcmInferDao {
 
     public ArrayList<TcmInferData> getTcmInference(String tcm, Integer start, Integer offset);
+    
+    public ArrayList<TcmInferData> getDistData(String tcm);
 
     public Integer getTcmInferCount(String tcm);
 
