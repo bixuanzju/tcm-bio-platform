@@ -10,6 +10,7 @@ public class MappingData {
 
     private String ontoName;
     private Integer totalNum;
+    private Integer tripleNum;
 
     public String getOntoName() {
         return ontoName;
@@ -22,6 +23,13 @@ public class MappingData {
     }
     public void setTotalNum(final Integer totalNum) {
         this.totalNum = totalNum;
+    }
+    
+    public Integer getTripleNum() {
+      	return tripleNum;
+    }
+    public void setTripleNum(final Integer tripleNum) {
+    		this.tripleNum = tripleNum;
     }
 
 }

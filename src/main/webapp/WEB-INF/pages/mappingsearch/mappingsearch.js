@@ -154,7 +154,7 @@ var mappingsearch = {
 	displayMapping : function(data, textStatus, jqXHR) {
 		data = commonjs.strToJson(data);
 		for(var i=0; i < data.length; i++) {
-			var mappingRow = mappingsearch.toMappingHtml(data[i].ontoName, data[i].totalNum, i+1);
+			var mappingRow = mappingsearch.toMappingHtml(data[i].ontoName, data[i].totalNum, data[i].tripleNum, i+1);
 			$('#mappingtable').append(mappingRow);
 		}
 	},
@@ -169,8 +169,9 @@ var mappingsearch = {
 		}
 	},
 	
-	toMappingHtml : function(name, totalNum, i) {
+	toMappingHtml : function(name, totalNum, tripleNum, i) {
 		$('#sample-mapping .graph-name').html(name);
+		$('#sample-mapping .triple-num').html(tripleNum);
 		$('#sample-mapping .total-num').html(totalNum);
 		$('#sample-mapping .mapping-detail-btn').attr("data-target", "#collapse" + i);
 		$('#sample-mapping .accordion-body').attr("id", "collapse" + i);
@@ -186,8 +187,8 @@ var mappingsearch = {
 			$('#' + this.currentOpen + ' .sample-mapping-graph .sub-graph-name').html(name);
 			$('#' + this.currentOpen + ' .sample-mapping-graph .sub-total-num').html(totalNum);
 		} else {
-			$('#' + this.currentOpen + ' .sample-mapping-graph .sub-graph-name').html("(空)");
-			$('#' + this.currentOpen + ' .sample-mapping-graph .sub-total-num').html("(空)");
+			$('#' + this.currentOpen + ' .sample-mapping-graph .sub-graph-name').html("(no result)");
+			$('#' + this.currentOpen + ' .sample-mapping-graph .sub-total-num').html("(no result)");
 		}
 		
 		var html = '<tr class="sub-mapping-graph">' + $('#' + this.currentOpen + ' .sample-mapping-graph').html() + '</tr>';

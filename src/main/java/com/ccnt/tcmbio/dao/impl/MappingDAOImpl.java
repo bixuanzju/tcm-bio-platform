@@ -172,7 +172,9 @@ public class MappingDAOImpl extends JdbcDaoSupport implements MappingDAO{
 
     @Override
     public ArrayList<MappingData> getMappings(){
-        final String sparql = "sparql select ?gn ?count where {graph <http://localhost:8890/graph_mapping_relations> {?gn tcmbio:mappingcount ?count}}";
+        final String sparql = "sparql select ?gn ?count ?num where {"
+        		+ "graph <http://localhost:8890/graph_mapping_relations> {?gn tcmbio:mappingcount ?count}. "
+        		+ "graph <http://localhost:8890/graph-resource> {?gn tcmbio:ontologycount ?num}}";
 
         LOGGER.debug("getMappings - query virtuoso: {}", sparql);
 
@@ -183,6 +185,7 @@ public class MappingDAOImpl extends JdbcDaoSupport implements MappingDAO{
                 final MappingData mappingData = new MappingData();
                 mappingData.setOntoName(row.get("gn").toString());
                 mappingData.setTotalNum(Integer.parseInt(row.get("count").toString()));
+                mappingData.setTripleNum(Integer.parseInt(row.get("num").toString()));
                 mappingDatas.add(mappingData);
             }
             return mappingDatas;
