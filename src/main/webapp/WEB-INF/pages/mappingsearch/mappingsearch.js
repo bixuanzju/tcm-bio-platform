@@ -154,9 +154,15 @@ var mappingsearch = {
 	displayMapping : function(data, textStatus, jqXHR) {
 		data = commonjs.strToJson(data);
 		for(var i=0; i < data.length; i++) {
-			var mappingRow = mappingsearch.toMappingHtml(data[i].ontoName, data[i].totalNum, data[i].tripleNum, i+1);
+			var mappingRow = mappingsearch.toMappingHtml(mappingsearch.modifyPrefix(data[i].ontoName), data[i].totalNum, data[i].tripleNum, i+1);
 			$('#mappingtable').append(mappingRow);
 		}
+	},
+	
+	modifyPrefix: function(name) {
+		var resourceArray = name.split("/");
+        return "http://www.biotcm.org/" + resourceArray[resourceArray.length-1];
+//		return name;
 	},
 	
 	displayDetail : function(data, textStatus, jqXHR) {
