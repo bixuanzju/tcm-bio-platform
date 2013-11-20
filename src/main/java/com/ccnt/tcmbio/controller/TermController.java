@@ -91,6 +91,21 @@ public class TermController {
         }
         return null;
     }
+    
+    @RequestMapping(value = "/v0.9/term/searchpinyin/kw={keyword}&s={start}&o={offset}", method = RequestMethod.GET)
+    public @ResponseBody TCMSearchData searchPinyin(@PathVariable final String keyword,
+            @PathVariable final String start, @PathVariable final String offset) throws Exception{
+
+        LOGGER.debug("Reveived GET request: ../v0.9/term/searchpinyin/kw={}&s={}&o={}", keyword, start, offset);
+
+        try {
+            return termService.searchPinyin(keyword, start, offset);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @RequestMapping(value = "/v0.9/term/searchdrug/kw={keyword}&s={start}&o={offset}", method = RequestMethod.GET)
     public @ResponseBody DrugSearchData searchDrug(@PathVariable final String keyword,

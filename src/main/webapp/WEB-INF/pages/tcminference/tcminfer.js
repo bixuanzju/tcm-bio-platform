@@ -8,30 +8,33 @@
 // ================= INIT FUNCTIONS ============================================
 $(function(){
 
-    var url = $.url();
-    var keyword = url.param("kw");
-    var start = url.param("s");
-    var offset = url.param("o");
-    tcminfer.currPage = url.fsegment(1);
-
-    if(keyword!=undefined && keyword!=""
-       && start!=undefined && offset!=undefined){
-        $('#showcase').removeClass('hide');
-        $('#tcm-keyword').val(keyword);
-        var url = tcminfer.getUrl(keyword, start, offset);
-        tcminfer.getTcmInfer(url);
-        tcminferVisualization.displaytcm.display(keyword);
-    }
+//    var url = $.url();
+//    var keyword = url.param("kw");
+//    var start = url.param("s");
+//    var offset = url.param("o");
+//    tcminfer.currPage = url.fsegment(1);
+//
+//    if(keyword!=undefined && keyword!=""
+//       && start!=undefined && offset!=undefined){
+//        $('#showcase').removeClass('hide');
+//        $('#tcm-keyword').val(keyword);
+//        var url = tcminfer.getUrl(keyword, start, offset);
+//        tcminfer.getTcmInfer(url);
+//        tcminferVisualization.displaytcm.display(keyword);
+//        
+//    }
+    
+    tcminfer.init();
 
     $("#tcm-search").live('click', function(){
         var keyword = $('#tcm-keyword').val();
-        window.open("index.html?kw=" + keyword + "&s=" + tcminfer.start + "&o=" + tcminfer.offset, "_self");
+        window.open("index.html?t=" + tcminfer.getType() + "&kw="  + keyword + "&s=" + tcminfer.start + "&o=" + tcminfer.offset, "_self");
     });
 
     $('#tcm-keyword').live('keypress', function(e){
         if(e.keyCode==13){
             var keyword = $('#tcm-keyword').val();
-            window.open("index.html?kw=" + keyword + "&s=" + tcminfer.start + "&o=" + tcminfer.offset, "_self");
+            window.open("index.html?t=" + tcminfer.getType() + "&kw=" + keyword + "&s=" + tcminfer.start + "&o=" + tcminfer.offset, "_self");
         }
     });
 
@@ -40,6 +43,7 @@ $(function(){
 // ================= UTILITY FUNCTIONS =========================================
 var tcminfer = {
     urlTcmInfer : "../v0.9/tcminfer/",
+    urlPinyinInfer : "../v0.9/tcminfer/pinyin/",
     start : 0,
     offset : 8,
     totalNum : 0,
@@ -61,15 +65,93 @@ var tcminfer = {
         top: 'auto', // Top position relative to parent in px
         left: 'auto' // Left position relative to parent in px
     },
+    
+    init : function() {
+
+      var url = $.url();
+      var keyword = url.param("kw");
+      var start = url.param("s");
+      var offset = url.param("o");
+      var type = url.param("t") == undefined ? url.param("t") : url.param("t").split('-');
+      tcminfer.currPage = url.fsegment(1);
+      
+      if(keyword!=undefined && keyword!=""){
+          $('#showcase').removeClass('hide');
+          $('#tcm-keyword').val(keyword);
+          if (type[1] == '1') {
+              $('#english').prop('checked', true);
+//              $('#tcm-keyword').val(keyword);
+              var url = tcminfer.getUrl(this.urlTcmInfer, keyword, start, offset);
+              tcminfer.getTcmInfer(url);
+              tcminferVisualization.displaytcm.display(keyword);
+          }
+          else if (type[1] == '2') {
+              $('#pinyin').prop('checked', true);
+              var url = tcminfer.getUrl(this.urlPinyinInfer, keyword, start, offset);
+              tcminfer.getPinyinInfer(url);
+//              tcminferVisualization.displaytcm.display(keyword);
+          }
+          
+      }
+
+    },
+    
+    getType : function() {
+        var type = "";
+        if($('#english').prop('checked') == true){
+            type = "-1";
+        }
+        if($('#pinyin').prop('checked') == true){
+            type = "-2";
+        }
+        return type;
+    },
 
     getTcmInfer : function(url){
         commonjs.ajax("GET", url, "", "", this.disDetailTab, commonjs.showErrorTip);
         $('.spin-progress').spin(this.spinopts);
     },
+    
+    getPinyinInfer: function(url){
+        commonjs.ajax("GET", url, "", "", this.disDetailTab1, commonjs.showErrorTip);
+        $('.spin-progress').spin(this.spinopts);
+    },
+    
+    disDetailTab1 : function(data){
+    	$('.spin-progress').spin(false);
+        data = commonjs.strToJson(data);
+        for(var i=0; i < data.tcmInferData.length; i++) {
+                var htmlRowTab2 = tcminfer.toHtmlRowTab2(data.tcmInferData[i]);
+                var htmlRowTab1 = tcminfer.toHtmlRowTab1(data.tcmInferData[i]);
+                $('#tab2-table').append(htmlRowTab2);
+                $('#tab1-table').append(htmlRowTab1);
+        }
+        
+        var html = ""
+            for(var i=0; i < data.tcmInferData.length; i++) {
+            	html += "<p>" + tcminfer.splitResource(data.tcmInferData[i].geneName) + "</p>"
+            }
+            
+        $(".modal-body").html(html);
+        $("#myModalLabel").html("Gene Name: " + data.tcmInferData.length);
+            
+        $('#total-or-fuzzytip').html("About " + data.totalNum + " results.");
+        tcminfer.totalNum = data.totalNum;
+        $('.pagination').pagination({
+            items : tcminfer.totalNum/8,
+            currentPage : tcminfer.currPage.split("-")[1],
+            onPageClick : function(pageNumber){
+                var keyword = $('#tcm-keyword').val();
+                window.open("index.html?t=" + tcminfer.getType() + "&kw="  + keyword + "&s=" + (pageNumber-1) * tcminfer.offset + "&o=" + tcminfer.offset + "#page-" + pageNumber, "_self");
+            }
+        });
+
+    },
 
     disDetailTab : function(data, textStatus, jqXHR){
         $('.spin-progress').spin(false);
         data = commonjs.strToJson(data);
+        
         if(data.status==false){
             // TODO
         } else {
@@ -95,16 +177,16 @@ var tcminfer = {
                 currentPage : tcminfer.currPage.split("-")[1],
                 onPageClick : function(pageNumber){
                     var keyword = $('#tcm-keyword').val();
-                    window.open("index.html?kw=" + keyword + "&s=" + (pageNumber-1) * tcminfer.offset + "&o=" + tcminfer.offset + "#page-" + pageNumber, "_self");
+                    window.open("index.html?t=" + tcminfer.getType() + "&kw="  + keyword + "&s=" + (pageNumber-1) * tcminfer.offset + "&o=" + tcminfer.offset + "#page-" + pageNumber, "_self");
                 }
             });
         }
     },
 
-    getUrl : function(keyword, start, offset){
-        return this.urlTcmInfer + "kw=" + keyword + "&s=" + start + "&o=" + offset;
+    getUrl : function(prefix, keyword, start, offset){
+        return prefix + "kw=" + keyword + "&s=" + start + "&o=" + offset;
     },
-
+    
     splitResource : function(resource){
         var resourceArray = resource.split("/");
         return resourceArray[resourceArray.length-1];

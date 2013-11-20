@@ -14,9 +14,13 @@ public interface TcmInferDao {
 
     public ArrayList<TcmInferData> getTcmInference(String tcm, Integer start, Integer offset);
     
+    public ArrayList<TcmInferData> getPinyinInference(String pinyin, Integer start, Integer offset);
+    
     public ArrayList<TcmInferData> getDistData(String tcm);
 
     public Integer getTcmInferCount(String tcm);
+    
+    public Integer getPinyinInferCount(String pinyin);
 
     public ArrayList<String> getDiseaseName(String tcm, Integer start, Integer offset);
 

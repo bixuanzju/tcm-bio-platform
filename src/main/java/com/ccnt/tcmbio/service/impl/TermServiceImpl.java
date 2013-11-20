@@ -69,6 +69,17 @@ public class TermServiceImpl implements TermService{
         tcmSearchData.setTcmDatas(tcmDatas);
         return tcmSearchData;
     }
+    
+    @Override
+    public TCMSearchData searchPinyin(final String keyword, final String start, final String offset){
+        final ArrayList<TCMData> tcmDatas = termDAO.searchPinyin(keyword, start, offset, 0);
+        final Integer count = termDAO.searchPinyinCount(keyword);
+        final TCMSearchData tcmSearchData = new TCMSearchData();
+        tcmSearchData.setLabel("TCM");
+        tcmSearchData.setResultCount(count);
+        tcmSearchData.setTcmDatas(tcmDatas);
+        return tcmSearchData;
+    }
 
     @Override
     public DrugSearchData searchDrug(final String keyword, final String start, final String offset){

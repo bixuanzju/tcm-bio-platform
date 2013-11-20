@@ -34,8 +34,12 @@ public interface TermDAO {
     public Integer searchGOIDCount(String keyword);
 
     public ArrayList<TCMData> searchTCM(String keyword, final String start, final String offset, final int type);
+    
+    public ArrayList<TCMData> searchPinyin(String keyword, final String start, final String offset, final int type);
 
     public Integer searchTcmCount(String keyword);
+    
+    public Integer searchPinyinCount(String keyword);
 
     public ArrayList<DrugData> searchDrug(String keyword, final String start, final String offset, final int type);
 

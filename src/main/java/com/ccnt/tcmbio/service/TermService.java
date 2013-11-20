@@ -27,6 +27,8 @@ public interface TermService {
     public GeneSearchData searchGOID(String keyword, String start, String offset);
 
     public TCMSearchData searchTCM(String keyword, String start, String offset);
+    
+    public TCMSearchData searchPinyin(String keyword, String start, String offset);
 
     public DrugSearchData searchDrug(String keyword, String start, String offset);
 

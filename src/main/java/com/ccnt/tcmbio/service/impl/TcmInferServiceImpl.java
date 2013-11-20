@@ -71,6 +71,32 @@ public class TcmInferServiceImpl implements TcmInferService{
         }
         return null;
     }
+    
+    @Override
+    public TcmInferSearchData getPinyinInference(final String pinyin, final Integer start, final Integer offset){
+
+        LOGGER.debug("get the tcm pinyin inference result");
+        try {
+            final TcmInferSearchData tcmSearchData = new TcmInferSearchData();
+
+//            if (!searchTcm(pinyin)) {
+//                tcmSearchData.setFuzzymatchTCM(fuzzyMatchTcm(pinyin));
+//                tcmSearchData.setStatus(false);
+//                tcmSearchData.setTcmInferData(null);
+//                return tcmSearchData;
+//            }
+            String pinyin_new = pinyin.toLowerCase();
+            final ArrayList<TcmInferData> pinyinInferData = tcmInferDao.getPinyinInference(pinyin_new, start, offset);
+            tcmSearchData.setTcmInferData(pinyinInferData);
+            tcmSearchData.setFuzzymatchTCM(null);
+            tcmSearchData.setTotalNum(tcmInferDao.getPinyinInferCount(pinyin_new));
+            return tcmSearchData;
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public ArrayList<TcmInferData> getAndCacheTcmInference(final String tcmName){

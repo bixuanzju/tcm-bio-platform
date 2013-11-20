@@ -37,9 +37,25 @@ public class TcmInferController {
     public @ResponseBody String getTcmInference(@PathVariable final String tcmName, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
 
         LOGGER.debug("Received GET request: /v0.9/tcminfer/kw={}&s={}&o={}", tcmName, start, offset);
-
+        
         try {
             final TcmInferSearchData tcmSearchDatas = tcmInferService.getTcmInference(tcmName, start, offset);
+            final ObjectMapper objectMapper =  new ObjectMapper();
+            return objectMapper.writeValueAsString(tcmSearchDatas);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @RequestMapping(value="/v0.9/tcminfer/pinyin/kw={pinyin}&s={start}&o={offset}", method=RequestMethod.GET)
+    public @ResponseBody String getPinyinInference(@PathVariable final String pinyin, @PathVariable final Integer start, @PathVariable final Integer offset) throws Exception{
+
+        LOGGER.debug("Received GET request: /v0.9/tcminfer/pinyin/kw={}&s={}&o={}", pinyin, start, offset);
+        
+        try {
+            final TcmInferSearchData tcmSearchDatas = tcmInferService.getPinyinInference(pinyin, start, offset);
             final ObjectMapper objectMapper =  new ObjectMapper();
             return objectMapper.writeValueAsString(tcmSearchDatas);
         } catch (final Exception e) {

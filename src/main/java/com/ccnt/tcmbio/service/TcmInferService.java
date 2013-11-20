@@ -15,6 +15,8 @@ import com.ccnt.tcmbio.data.graph.Graphml;
 public interface TcmInferService {
 
     public TcmInferSearchData getTcmInference(String tcmName, Integer start, Integer offset);
+    
+    public TcmInferSearchData getPinyinInference(String pinyin, Integer start, Integer offset);
 
     public ArrayList<TcmInferData> getAndCacheTcmInference(String tcmName);
 

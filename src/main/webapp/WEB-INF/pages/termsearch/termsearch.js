@@ -83,6 +83,7 @@ var termsearch = {
 	searchTCMURL : '../v0.9/term/searchtcm/kw=',
 	searchDrugURL : '../v0.9/term/searchdrug/kw=',
 	searchProteinURL : '../v0.9/term/searchprotein/kw=',
+	searchPinyinURL : '../v0.9/term/searchpinyin/kw=',
 	
 	// exact search APIs
 	getDiseaseURL : '../v0.9/term/getdisease/kw=',
@@ -199,6 +200,9 @@ var termsearch = {
 		if($('#DrugCheckbox').prop('checked') == true){
 			type += "-5";
 		}
+		if($('#PinyinCheckbox').prop('checked') == true){
+			type += "-7";
+		}
 		if(type==""){
 			type += "-a";
 		}
@@ -224,6 +228,7 @@ var termsearch = {
 					this.searchDrug(this.getURL(this.searchDrugURL, keyword, start, offset));
 					this.searchGeneID(this.getURL(this.searchGeneIDURL, keyword, start, offset));
 					this.searchProtein(this.getURL(this.searchProteinURL, keyword, start, offset));
+					this.searchPinyin(this.getURL(this.searchPinyinURL, keyword, start, offset));
 				} else if (type[i] == 1) {
 					$('#DiseaseCheckbox').prop('checked', true);
 					this.searchDisease(this.getURL(this.searchDiseaseURL, keyword, start, offset));
@@ -242,6 +247,9 @@ var termsearch = {
 				} else if (type[i] == 6) {
 					$('#GeneIDCheckbox').prop('checked', true);
 					this.searchGeneID(this.getURL(this.searchGeneIDURL, keyword, start, offset));
+				} else if (type[i] == 7) {
+					$('#PinyinCheckbox').prop('checked', true);
+					this.searchPinyin(this.getURL(this.searchPinyinURL, keyword, start, offset));
 				} 
 			}
 		}
@@ -277,6 +285,12 @@ var termsearch = {
 	},
 	
 	searchTCM : function(url){
+		commonjs.ajax("GET", url, "", "", this.displaySearchResult, commonjs.showErrorTip);
+		this.spinCount ++;
+		$('.spin-progress').spin(this.spinopts);
+	},
+	
+	searchPinyin : function(url){
 		commonjs.ajax("GET", url, "", "", this.displaySearchResult, commonjs.showErrorTip);
 		this.spinCount ++;
 		$('.spin-progress').spin(this.spinopts);

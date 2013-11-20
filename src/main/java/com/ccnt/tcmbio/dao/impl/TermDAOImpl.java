@@ -522,6 +522,108 @@ public class TermDAOImpl extends JdbcDaoSupport implements TermDAO{
 
         return 0;
     }
+    
+    @Override
+    public Integer searchPinyinCount(final String keyword){
+
+        try {
+        	 	Integer count = 0;
+        		String sparql = "sparql select count(*) where "
+            			+ "{graph<http://localhost:8890/TCMGeneDit_pinyin_mapping> {?tcmls owl:sameAs " + "\"" +  keyword + "\""
+            			+ "} . graph<http://localhost:8890/TCMGeneDit_TCMLS_mapping> {?tcmName owl:sameAs ?tcmls}}";
+                LOGGER.debug("query for tcm fuzzy count: {}", sparql);
+                count = getJdbcTemplate().queryForInt(sparql);
+                
+                return count;            
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+    
+    @Override
+    public ArrayList<TCMData> searchPinyin(final String keyword, final String start, final String offset, final int type){
+
+        try {            
+        	final ArrayList<TCMData> tcmDatas = new ArrayList<TCMData>();
+        	String sparql = "sparql select ?tcmName where "
+        			+ "{graph<http://localhost:8890/TCMGeneDit_pinyin_mapping> {?tcmls owl:sameAs " + "\"" +  keyword + "\""
+        			+ "} . graph<http://localhost:8890/TCMGeneDit_TCMLS_mapping> {?tcmName owl:sameAs ?tcmls}}";
+        	
+        	LOGGER.debug("query for tcm: {}", sparql);
+        	List<Map<String, Object>> rows0 = getJdbcTemplate().queryForList(sparql);
+
+            for (final Map<String, Object> row0 : rows0){
+                final String tcmName = row0.get("tcmName").toString();
+
+                final String sparql1 = "sparql select * where {graph<" + TCMGeneDIT + ">" +
+                		"{ <" + tcmName + "> <" + TCMGeneDITPrefix + "effect> ?effect }} ";
+                final String sparql2 = "sparql select * where {graph<" + TCMGeneDIT + "> " +
+                        "{ <" + tcmName + "> <" + TCMGeneDITPrefix + "treatment> ?disease }}";
+                final String sparql3 = "sparql select * where {graph<" + TCMGeneDIT + "> " +
+                        "{ <" + tcmName + "> <" + TCMGeneDITPrefix + "ingredient> ?ingredient }}";
+                final String sparql4 = "sparql select * where {graph<" + TCMGeneDIT + "> " +
+                        "{<" + tcmName + "> <" + TCMGeneDITPrefix + "association> ?gene }}";
+
+                final TCMData tcmData = new TCMData();
+                tcmData.setTcmName(tcmName);
+
+                final Set<String> effectSet = new HashSet<String>();
+                final Set<String> ingredientSet = new HashSet<String>();
+                final Set<String> diseaSet = new HashSet<String>();
+                final Set<String> geneSet = new HashSet<String>();
+
+                LOGGER.debug("query for tcm detail info: {}", sparql1);
+                final List<Map<String, Object>> rows1 = getJdbcTemplate().queryForList(sparql1);
+                for (final Map<String, Object> row1 : rows1){
+                    if (row1.get("effect") != null) {
+                        effectSet.add(row1.get("effect").toString());
+                    }
+                }
+
+                LOGGER.debug("query for tcm detail info: {}", sparql2);
+                final List<Map<String, Object>> rows2 = getJdbcTemplate().queryForList(sparql2);
+                for (final Map<String, Object> row : rows2){
+                    if (row.get("disease") != null) {
+                        diseaSet.add(row.get("disease").toString());
+                    }
+                }
+
+                LOGGER.debug("query for tcm detail info: {}", sparql3);
+                final List<Map<String, Object>> rows3 = getJdbcTemplate().queryForList(sparql3);
+                for (final Map<String, Object> row : rows3){
+                    if (row.get("ingredient") != null) {
+                        ingredientSet.add(row.get("ingredient").toString());
+                    }
+                }
+
+                LOGGER.debug("query for tcm detail info: {}", sparql4);
+                final List<Map<String, Object>> rows4 = getJdbcTemplate().queryForList(sparql4);
+                for (final Map<String, Object> row : rows4){
+                    if (row.get("gene") != null) {
+                        geneSet.add(row.get("gene").toString());
+                    }
+                }
+
+                tcmData.setEffect(effectSet);
+                tcmData.setIngredient(ingredientSet);
+                tcmData.setRelatedGene(geneSet);
+                tcmData.setTreatment(diseaSet);
+                tcmDatas.add(tcmData);
+            }
+
+            return tcmDatas;
+        } catch (final DataAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    
 
     @Override
     public ArrayList<DrugData> searchDrug(final String keyword, final String start, final String offset, final int type){

@@ -153,6 +153,89 @@ public class TcmInferDaoImpl extends JdbcDaoSupport implements TcmInferDao {
 
 		return null;
 	}
+	
+	@Override
+	public ArrayList<TcmInferData> getPinyinInference(final String pinyin, final Integer start, final Integer offset) {
+
+		final String sparql = "sparql select * where {"
+				+ "graph<http://localhost:8890/TCMGeneDit_pinyin_mapping> {?tcmls owl:sameAs "
+				+ "\"" + pinyin + "\"" + "} ."
+				+ "graph<http://localhost:8890/TCMGeneDit_TCMLS_mapping> {?tcmName owl:sameAs ?tcmls} ."
+				+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName} . "
+				+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+				+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+				+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+				+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
+				+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName} . "
+				+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}} "
+				+ "limit(" + offset + ") offset(" + start + ")";
+
+		LOGGER.debug("get tcm pinyin infer result - query virtuoso: {}", sparql);
+
+		try {
+			final ArrayList<TcmInferData> tcmInferDatas = new ArrayList<TcmInferData>();
+			final List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+					sparql);
+
+			for (final Map<String, Object> map : rows) {
+				final TcmInferData tcmInferData = new TcmInferData();
+				tcmInferData.setTcmName(map.get("tcmName").toString());
+				tcmInferData.setDiseaseName(map.get("diseaseName").toString());
+				tcmInferData.setDiseaseID(map.get("diseaseID").toString());
+				tcmInferData.setDrugID(map.get("drugID").toString());
+				tcmInferData.setDrugName(map.get("drugName").toString());
+				tcmInferData.setTargetID(map.get("targetID").toString());
+				tcmInferData.setTargetName(map.get("targetName").toString());
+				tcmInferData.setProteinAcce(map.get("proteinAcce").toString());
+				tcmInferData.setGeneName(map.get("geneName").toString());
+				tcmInferData.setGeneGOID(map.get("GOID").toString());
+				tcmInferData.setGeneProduct(map.get("genePro").toString());
+				tcmInferDatas.add(tcmInferData);
+			}
+			return tcmInferDatas;
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	@Override
+	public Integer getPinyinInferCount(final String pinyin) {
+
+		final String sparql = "sparql select count(*) as ?count where {"
+				+ "graph<http://localhost:8890/TCMGeneDit_pinyin_mapping> {?tcmls owl:sameAs"
+				+ "\"" + pinyin + "\"" + "} ."
+				+ "graph<http://localhost:8890/TCMGeneDit_TCMLS_mapping> {?tcmName owl:sameAs ?tcmls} ."
+				+ "graph<http://localhost:8890/TCMGeneDIT> {?tcmName TCMGeneDIT:treatment ?diseaseName} . "
+				+ "graph<http://localhost:8890/tcm_diseasesome_mapping> {?diseaseName owl:sameAs ?diseaseID} . "
+				+ "graph<http://linkedlifedata.com/resource/diseasome> {?diseaseID diseasesome:possibleDrug ?drugID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID drugbank:target ?targetID} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?drugID rdfs:label ?drugName} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:swissprotId ?proteinAcce} . "
+				+ "graph<http://linkedlifedata.com/resource/drugbank> {?targetID drugbank:name ?targetName} . "
+				+ "graph<http://uniprot/protein_gene_mapping> {?proteinAcce uniprotGO:classifiedWith ?GOID} . "
+				+ "graph<http://localhost:8890/uniprot_protein_entrez_mapping> {?proteinAcce uniprotGO:classifiedWith ?geneID} . "
+				+ "graph<http://localhost:8890/symbol_geneid_mapping> {?geneID <http://www.ccnt.org/symbol> ?geneName} . "
+				+ "graph<http://localhost:8890/gene_ontology> {?GOID rdfs:label ?genePro}} ";
+
+		LOGGER.debug("get tcm inference count - query virtuoso: {}", sparql);
+
+		try {
+			return getJdbcTemplate().queryForInt(sparql);
+		}
+		catch (final DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+	}
 
 	@Override
 	public Integer getTcmInferCount(final String tcm) {
